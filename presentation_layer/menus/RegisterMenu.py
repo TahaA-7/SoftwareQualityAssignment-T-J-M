@@ -1,0 +1,125 @@
+from getpass import getpass
+import time
+import maskpass
+from logic_layer.utils.StringValidations import StringValidations
+
+class RegisterMenu():
+    # username, email, password = ""
+    # initialise each as "", from then each are individually manipulable
+    username = password = first_name = last_name = ""
+    fields_dict = {"username": username, "password": password, "first_name": 
+                   first_name, "last_name": last_name}
+
+    @classmethod
+    def register(cls):
+        print("""Welcome to register page'
+-   -   -   -   -   -   -""")
+        while True:
+            print(cls.fields_dict)
+            user_choice = cls.__handle_input_length(getpass(
+f"""Please select a field and update it:
+[U] username {"✓" if cls.fields_dict["username"] not in [None, ""] else ""}
+[P] password {"✓" if cls.fields_dict["password"] not in [None, ""] else ""}
+[F] first name {"✓" if cls.fields_dict["first_name"] not in [None, ""] else ""}
+[L] last name {"✓" if cls.fields_dict["last_name"] not in [None, ""] else ""}
+
+[S] submit
+[C] cancel\n"""))
+            match user_choice:
+                case _ if user_choice not in ["U", "P", "F", "L", "S", "C"]:
+                    print("Invalid choice")
+                case "U":
+                    cls.__handle_username()
+                # case "E":
+                #     cls.handle_email()
+                case "P":
+                    cls.__handle_password()
+                case "F":
+                    cls.__handle_first_name_submit()
+                case "L":
+                    cls.__handle_last_name_submit()
+                case "S":
+                    if cls.__handle_submit() == False:
+                        continue
+                    break
+                case "C":
+                    break
+
+    @classmethod
+    def __handle_username(cls):
+        username_input = input("""Please enter your username:
+    ○ must be unique and have a length of at least 8 characters
+    ○ must be no longer than 10 characters
+    ○ must be started with a letter or underscores (_)
+    ○ can contain letters (a-z), numbers (0-9), underscores (_), apostrophes ('), and periods (,):\n""")
+        if StringValidations.is_valid_username(username_input) == False:
+            print("Invalid username")
+            time.sleep(1)
+        else:
+            print("Username set succesfully")
+            time.sleep(1)
+            cls.username = username_input
+
+    # def handle_email(cls):
+    #     email_input = input("Please enter your email. It is used for password recovery, so please use your legitimate one:\n")
+    #     if StringValidations.is_valid_username(email_input) == False:
+    #         print("Invalid email")
+    #     else:
+    #         cls.email = email_input.lower()
+
+    @classmethod
+    def __handle_password(cls):
+        print(r"""Password:
+    ○ must have a length of at least 12 characters
+    ○ must be no longer than 30 characters
+    ○ can contain letters (a-z), (A-Z), numbers (0-9), Special characters such as ~!@#$%&_-
+    +=`|\(){}[]:;'<>,.?/
+    ○ must have a combination of at least one lowercase letter, one uppercase letter, one digit,
+    and one special character:""")
+        password_input = maskpass.askpass(p="", m="*")
+        confirm_password_input = maskpass.askpass("Please confirm your password:\n")
+        if StringValidations.is_valid_username(password_input) == False or password_input != confirm_password_input:
+            print("Invalid password")
+            time.sleep(1)
+        else:
+            print("Password set succesfully")
+            time.sleep(1)
+            cls.password = password_input
+    
+    @classmethod
+    def __handle_submit(cls):
+        # if "" not in [cls.username, cls.email, cls.password]:
+        if "" not in [cls.username, cls.password]:
+            # CrudMethods.register_user()
+            pass
+        else:
+            print("""Error: cannot submit because username and/or email and/or password has remained blank,'
+either because left unhandled or couldn't be updated due to an invalid input""")
+            time.sleep(1)
+
+    @classmethod
+    def __handle_first_name_submit(cls):
+        name_input = input("Please enter your first name: ")
+        if StringValidations.is_valid_first_or_last_name == False:
+            print("Invalid first name")
+            time.sleep(1)
+        else:
+            print("First name set succesfully")
+            time.sleep(1)
+            cls.first_name = name_input
+
+    @classmethod
+    def __handle_last_name_submit(cls):
+        name_input = input("Please enter your last name: ")
+        if StringValidations.is_valid_first_or_last_name == False:
+            print("Invalid last name")
+            time.sleep(1)
+        else:
+            print("Last name set succesfully")
+            time.sleep(1)
+            cls.last_name = name_input
+
+    @classmethod
+    def __handle_input_length(cls, inp):
+        user_inp = inp[-1].upper() if len(inp) > 0 else " "
+        return user_inp

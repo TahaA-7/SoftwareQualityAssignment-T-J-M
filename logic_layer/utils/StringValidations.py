@@ -24,16 +24,21 @@ class StringValidations:
         return True
 
     @classmethod
+    def is_valid_first_or_last_name(cls, fl_name: str) -> bool:
+        return fl_name.isalpha()
+
+    @classmethod
     def __length_and_characters_check(cls, type, str: str):
         validations_dict = {"init": True}
         try:
             if type == "username":
                 username = str
+                allowed_chars = set(string.ascii_letters + string.digits + "_'.,")
                 validations_dict = {
                     "length": 7 < len(username) < 11,
                     "starts_correctly": username[0] in set(string.ascii_letters).union("_"),
-                    "follows_correctly": username[1:] in 
-                        set(string.ascii_letters + string.digits).union("_", "'", ".")
+                    # use whitelist to avoid potential errors
+                    "follows_correctly": all(c in allowed_chars for c in username[1:])
                 }
 
             elif type == "password":
@@ -52,7 +57,8 @@ class StringValidations:
                     "capital": any(c.isupper() for c in password),
                     # these characters are safe in Python
                     "special_char": any(c in allowed_specials for c in password),
-                    "special_char_not_allowed": any(c not in allowed_specials_set for c in password)
+                    # another whitelist method, yes
+                    "all_allowed": all(c in allowed_specials_set for c in password)
                 }
 
             elif type == "email":
