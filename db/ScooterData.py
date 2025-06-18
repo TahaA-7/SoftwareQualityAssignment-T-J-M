@@ -39,3 +39,9 @@ class scooter_data:
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM scooters WHERE serial_number = ?", (serial_number,))
+
+    def update_scooter(self, serial_number, field, value):
+        with self.db.connect() as conn:
+            cursor = conn.cursor()
+            query = f"UPDATE scooters SET {field} = ? WHERE serial_number = ?"
+            cursor.execute(query, (value, serial_number))

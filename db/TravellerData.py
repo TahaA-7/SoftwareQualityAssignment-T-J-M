@@ -39,3 +39,9 @@ class traveller_data:
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM travellers WHERE customer_id = ?", (customer_id,))
+
+    def update_traveller(self, customer_id, field, new_value):
+        with self.db.connect() as conn:
+            cursor = conn.cursor()
+            query = f"UPDATE travellers SET {field} = ? WHERE customer_id = ?"
+            cursor.execute(query, (new_value, customer_id))

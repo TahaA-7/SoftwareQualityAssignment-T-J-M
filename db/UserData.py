@@ -22,3 +22,21 @@ class user_data:
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM users WHERE username = ?", (username.lower(),))
+
+    def update_user_profile(self, username, first_name, last_name):
+        with self.db.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE users
+                SET first_name = ?, last_name = ?
+                WHERE username = ?
+            ''', (first_name, last_name, username.lower()))
+
+    def update_user_password(self, username, hashed_password):
+        with self.db.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE users
+                SET hashed_password = ?
+                WHERE username = ?
+            ''', (hashed_password, username.lower()))
