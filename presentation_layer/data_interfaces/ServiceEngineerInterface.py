@@ -5,6 +5,9 @@ class ServiceEngineerInterface:
     def __init__(self, ):
         pass
 
+    def start(self):
+        pass
+
     def update_self_password(self):
         new_password = input("Please enter new password")
         if StringValidations.is_valid_password(new_password):
