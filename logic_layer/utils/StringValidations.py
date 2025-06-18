@@ -13,15 +13,13 @@ class StringValidations:
     def is_valid_email(cls, email: str) -> bool:
         if cls.__check_regex("email", email) == False:
             return False
-        elif cls.__length_and_characters_check("email", email) == True:
+        elif cls.__length_and_characters_check("email", email) == False:
             return False
         return True
 
     @classmethod
     def is_valid_password(cls, password: str) -> bool:
-        if cls.__length_and_characters_check("password", password) == False:
-            return False
-        return True
+        return cls.__length_and_characters_check("password", password)
 
     @classmethod
     def is_valid_first_or_last_name(cls, fl_name: str) -> bool:

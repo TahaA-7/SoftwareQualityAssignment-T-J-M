@@ -1,27 +1,35 @@
+# python -m pip install maskpass
+import maskpass
+
 from getpass import getpass
 import time
-import maskpass
 from logic_layer.utils.StringValidations import StringValidations
+from logic_layer.AddMethods import AddDataService
 
-class RegisterMenu():
-    # username, email, password = ""
+class RegisterMenu:
     # initialise each as "", from then each are individually manipulable
     username = password = first_name = last_name = ""
-    fields_dict = {"username": username, "password": password, "first_name": 
-                   first_name, "last_name": last_name}
+    @classmethod
+    def get_fields_dict(cls):
+        return {
+            "username": cls.username,
+            "password": "" if "" else len(cls.password) * "*",
+            "first_name": cls.first_name,
+            "last_name": cls.last_name
+        }
 
     @classmethod
     def register(cls):
         print("""Welcome to register page'
 -   -   -   -   -   -   -""")
         while True:
-            print(cls.fields_dict)
+            print([f for f in cls.get_fields_dict().items()])
             user_choice = cls.__handle_input_length(getpass(
 f"""Please select a field and update it:
-[U] username {"✓" if cls.fields_dict["username"] not in [None, ""] else ""}
-[P] password {"✓" if cls.fields_dict["password"] not in [None, ""] else ""}
-[F] first name {"✓" if cls.fields_dict["first_name"] not in [None, ""] else ""}
-[L] last name {"✓" if cls.fields_dict["last_name"] not in [None, ""] else ""}
+[U] username {"✓" if cls.get_fields_dict()["username"] not in [None, ""] else ""}
+[P] password {"✓" if cls.get_fields_dict()["password"] not in [None, ""] else ""}
+[F] first name {"✓" if cls.get_fields_dict()["first_name"] not in [None, ""] else ""}
+[L] last name {"✓" if cls.get_fields_dict()["last_name"] not in [None, ""] else ""}
 
 [S] submit
 [C] cancel\n"""))
@@ -43,6 +51,7 @@ f"""Please select a field and update it:
                         continue
                     break
                 case "C":
+                    cls.username = cls.password = cls.first_name = cls.last_name = ""
                     break
 
     @classmethod
@@ -54,10 +63,10 @@ f"""Please select a field and update it:
     ○ can contain letters (a-z), numbers (0-9), underscores (_), apostrophes ('), and periods (,):\n""")
         if StringValidations.is_valid_username(username_input) == False:
             print("Invalid username")
-            time.sleep(1)
+            time.sleep(0.75)
         else:
             print("Username set succesfully")
-            time.sleep(1)
+            time.sleep(0.75)
             cls.username = username_input
 
     # def handle_email(cls):
@@ -76,47 +85,50 @@ f"""Please select a field and update it:
     +=`|\(){}[]:;'<>,.?/
     ○ must have a combination of at least one lowercase letter, one uppercase letter, one digit,
     and one special character:""")
-        password_input = maskpass.askpass(p="", m="*")
-        confirm_password_input = maskpass.askpass("Please confirm your password:\n")
-        if StringValidations.is_valid_username(password_input) == False or password_input != confirm_password_input:
+        password_input = maskpass.askpass(prompt="", mask="*")
+        confirm_password_input = maskpass.askpass(prompt="Please confirm your password: ", mask="*")
+        if StringValidations.is_valid_password(password_input) == False or password_input != confirm_password_input:
             print("Invalid password")
-            time.sleep(1)
+            time.sleep(0.75)
         else:
             print("Password set succesfully")
-            time.sleep(1)
+            time.sleep(0.75)
             cls.password = password_input
     
     @classmethod
     def __handle_submit(cls):
         # if "" not in [cls.username, cls.email, cls.password]:
-        if "" not in [cls.username, cls.password]:
-            # CrudMethods.register_user()
-            pass
+        if "" not in [cls.username, cls.password, cls.first_name, cls.last_name]:
+            added_user = AddDataService.addUser(cls.username, cls.password, cls.first_name, cls.last_name)
+            if added_user != None:
+                print("User registered succesfully and is now awaiting approval by an admin.")
+            else:
+                print("Error: user already exists")
         else:
             print("""Error: cannot submit because username and/or email and/or password has remained blank,'
-either because left unhandled or couldn't be updated due to an invalid input""")
-            time.sleep(1)
+either because left unhandled or couldn't be updated due to an invalid input.""")
+        time.sleep(0.75)
 
     @classmethod
     def __handle_first_name_submit(cls):
         name_input = input("Please enter your first name: ")
-        if StringValidations.is_valid_first_or_last_name == False:
+        if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid first name")
-            time.sleep(1)
+            time.sleep(0.75)
         else:
             print("First name set succesfully")
-            time.sleep(1)
+            time.sleep(0.75)
             cls.first_name = name_input
 
     @classmethod
     def __handle_last_name_submit(cls):
         name_input = input("Please enter your last name: ")
-        if StringValidations.is_valid_first_or_last_name == False:
+        if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid last name")
-            time.sleep(1)
+            time.sleep(0.75)
         else:
             print("Last name set succesfully")
-            time.sleep(1)
+            time.sleep(0.75)
             cls.last_name = name_input
 
     @classmethod
