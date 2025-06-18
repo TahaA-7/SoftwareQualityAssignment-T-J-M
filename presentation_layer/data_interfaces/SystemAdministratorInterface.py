@@ -1,4 +1,4 @@
-import ServiceEngineerInterface
+from .ServiceEngineerInterface import ServiceEngineerInterface
 
 class SystemAdministratorInterface(ServiceEngineerInterface):
     def __init__(self):

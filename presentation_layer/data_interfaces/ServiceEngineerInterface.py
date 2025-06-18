@@ -1,6 +1,6 @@
 import logic_layer.utils.StringValidations as StringValidations
 
-class ServiceEngineerInterface:
+class ServiceEngineerInterface():
     # service engineer is standard user
     def __init__(self, ):
         pass
@@ -28,3 +28,6 @@ class ServiceEngineerInterface:
         ID “2123287421” by entering any of these keys: “mik”, “omso”, or “2328”, etc.
         '''
         pass
+
+    def foo(self):
+        print("hi")

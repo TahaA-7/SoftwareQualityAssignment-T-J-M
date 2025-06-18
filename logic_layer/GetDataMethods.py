@@ -18,7 +18,7 @@ class GetDataService:
 
     def get_user(self, username: str, password: str):
         # for u in self.user_:
-        #     if u.username == username and u.password == password:
+        #     if u.username == username and u.password == password and is_active == True:
         #         return u
         # return None
         pass

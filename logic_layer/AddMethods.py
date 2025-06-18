@@ -6,8 +6,9 @@ from db.LogData import log_data
 from DataModels.ScooterModel import Scooter
 from DataModels.TravellerModel import Traveller
 
+from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
+
 import re
-import hashlib
 
 class AddDataService:
     def __init__(self):
@@ -15,9 +16,6 @@ class AddDataService:
         self.traveller_ = traveller_data()
         self.scooter_ = scooter_data()
         self.log_ = log_data()
-
-    def hash_password(self, plain_password):
-        return hashlib.sha256(plain_password.encode()).hexdigest()
 
     def addUser(self):
         username = input("Username (8-10 chars): ").strip()
@@ -34,7 +32,7 @@ class AddDataService:
             print("Password too short.")
             return
 
-        hashed = self.hash_password(password)
+        hashed = PasswordHasherSalter.hash_password(password)
         self.user_.add_user(username, hashed, role, first_name, last_name)
         print("User added successfully.")
 

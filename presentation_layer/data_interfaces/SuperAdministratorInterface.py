@@ -1,6 +1,7 @@
-import ServiceEngineerInterface, SystemAdministratorInterface
+from .SystemAdministratorInterface import SystemAdministratorInterface
+from .ServiceEngineerInterface import ServiceEngineerInterface
 
-class SystemAdministratorInterface(SystemAdministratorInterface):
+class SuperAdministratorInterface(SystemAdministratorInterface):
     '''
     omitted methods:
         update_self_password

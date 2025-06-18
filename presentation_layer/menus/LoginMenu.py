@@ -1,11 +1,10 @@
 # python -m pip install maskpass
 import maskpass
 
-import getpass
+from getpass import getpass
 import time
 
-from presentation_layer import home
-
+from utils.Session import Session
 from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.GetDataMethods import GetDataService
 
@@ -18,6 +17,7 @@ class LoginMenu:
     
     @classmethod
     def login(cls):
+        # from home import Home # Place here instead of atop the file to avoid circular import
         print("""Welcome to login page'
 -   -   -   -   -   -   -""")
         while True:
@@ -40,7 +40,7 @@ f"""Please select a field and update it:
                     cls.__handle_password()
                 case "L":
                     if cls.__handle_submit():
-                        home.Home.set_loggedin_true(cls.user)
+                        Session.set_loggedin_true(cls.user)
                         break
                     else:
                         continue
@@ -55,8 +55,8 @@ f"""Please select a field and update it:
 
     @classmethod
     def __handle_password(cls):
-        inp = maskpass(prompt="Please enter password: ", mask="*")
-        cls.username = inp if StringValidations.is_valid_password(inp) else ""
+        inp = maskpass.askpass(prompt="Please enter password: ", mask="*")
+        cls.password = inp if StringValidations.is_valid_password(inp) else ""
 
     @classmethod
     def __handle_submit(cls):

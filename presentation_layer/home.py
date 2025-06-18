@@ -6,7 +6,9 @@ import os, sys, platform
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # from enum import Enum
+from utils.Session import Session
 from menus.RegisterMenu import RegisterMenu
+from menus.LoginMenu import LoginMenu
 from logic_layer.utils.TerminalClearner import TerminalCleaner
 from presentation_layer.data_interfaces.ServiceEngineerInterface import ServiceEngineerInterface
 from presentation_layer.data_interfaces.SystemAdministratorInterface import SystemAdministratorInterface
@@ -17,10 +19,8 @@ from presentation_layer.data_interfaces.SuperAdministratorInterface import Super
 #     SYSTEM_ADMINISTRATOR = 2
 #     SUPER_ADMINISTRATOR = 3
 
-class Home:
-    logged_in = False
-    user = None
 
+class Home:
     @classmethod
     def start(cls):
         cls.home_screen()
@@ -30,7 +30,7 @@ class Home:
         # getpass hides the input
         getpass(f" -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -\nPress enter to continue ")
         while True:
-            if not cls.logged_in:
+            if not Session.logged_in:
                 TerminalCleaner.clear_terminal()
                 print("""What do you want to do?
 [R] register
@@ -41,20 +41,22 @@ class Home:
                 if user_inp == 'R':
                     RegisterMenu.register()
                 elif user_inp == 'L':
-                    pass
+                    LoginMenu.login()
                     #LoginMenu.login()
                 elif user_inp == 'E':
                     break
                 else:
                     print("Invalid input!")
             else:
-                match cls.user:
+                match Session.user:
                     case 1:
-                        ServiceEngineerInterface.start(cls.user)
+                        ServiceEngineerInterface.start(Session.user)
                     case 2:
-                        SystemAdministratorInterface.start(cls.user)
+                        SystemAdministratorInterface.start(Session.user)
                     case 3:
-                        SuperAdministratorInterface.start(cls.user)
+                        SuperAdministratorInterface.start(Session.user)
+                    case _:
+                        continue
                         
 
 
