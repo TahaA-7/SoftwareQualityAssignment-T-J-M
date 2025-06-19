@@ -3,8 +3,16 @@ from access_layer.db.TravellerData import traveller_data
 from access_layer.db.ScooterData import scooter_data
 from access_layer.db.LogData import log_data
 
+import json
+import os
+
 class GetDataService:
+
     def __init__(self):
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        json_path = os.path.join(base_dir, "access_layer", "superadministrators.json")
+        with open(json_path, "r", encoding="utf-8") as f:
+            self.super_admin_ = json.load(f)
         self.user_ = user_data()
         self.traveller_ = traveller_data()
         self.scooter_ = scooter_data()
@@ -17,11 +25,15 @@ class GetDataService:
             print(f"- {username} ({role}): {first_name} {last_name}")
 
     def get_user(self, username: str, password: str):
-        # for u in self.user_:
-        #     if u.username == username and u.password == password and is_active == True:
-        #         return u
-        # return None
-        pass
+        print(type(self.super_admin_))
+        print(self.super_admin_)
+        for u in self.super_admin_:
+            if u["username"] == username and u["password"] == password:
+                return u
+        for u in self.user_:
+            if u.username == username and u.password == password and u.is_active == True:
+                return u
+        return None
 
     def search_scooters(self):
         search_term = input("Enter keyword to search for scooters: ").strip()

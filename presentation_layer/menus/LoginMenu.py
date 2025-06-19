@@ -61,7 +61,8 @@ f"""Please select a field and update it:
     @classmethod
     def __handle_submit(cls):
         if "" not in [cls.username, cls.password]:
-            fetched_user = GetDataService.get_user(cls.username, cls.password)
+            obj = GetDataService()
+            fetched_user = obj.get_user(cls.username, cls.password)
             if fetched_user != None:
                 cls.user = fetched_user
                 print("Login succesfull")

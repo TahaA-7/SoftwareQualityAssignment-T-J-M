@@ -1,4 +1,4 @@
-from db.db_context import DBContext
+from access_layer.db.db_context import DBContext
 
 class log_data:
     def __init__(self):
@@ -13,4 +13,3 @@ class log_data:
                 ORDER BY timestamp DESC
             ''')
             return cursor.fetchall()
-
