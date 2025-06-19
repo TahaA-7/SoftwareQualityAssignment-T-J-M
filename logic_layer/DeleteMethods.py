@@ -1,7 +1,7 @@
-from db.UserData import user_data
-from db.TravellerData import traveller_data
-from db.ScooterData import scooter_data
-from db.LogData import log_data
+from access_layer.db.UserData import user_data
+from access_layer.db.TravellerData import traveller_data
+from access_layer.db.ScooterData import scooter_data
+from access_layer.db.LogData import log_data
 
 
 class AddDataService:

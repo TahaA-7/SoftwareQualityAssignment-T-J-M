@@ -1,7 +1,7 @@
-from db.UserData import user_data
-from db.TravellerData import traveller_data
-from db.ScooterData import scooter_data
-from db.LogData import log_data
+from access_layer.db.UserData import user_data
+from access_layer.db.TravellerData import traveller_data
+from access_layer.db.ScooterData import scooter_data
+from access_layer.db.LogData import log_data
 
 import hashlib
 
@@ -14,7 +14,6 @@ class UpdateDataService:
 
     def hash_password(self, plain_password):
         return hashlib.sha256(plain_password.encode()).hexdigest()
-
 
     def updateUser_profile(self):
         username = input("Username to update: ").strip()
