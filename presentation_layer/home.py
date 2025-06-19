@@ -5,7 +5,8 @@ import os, sys, platform
 #   add the parent directory to the Python path so logic_layer, access_layer, etc. are importable
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# from enum import Enum
+from enum import Enum
+from utils.Roles import Roles
 from utils.Session import Session
 from menus.RegisterMenu import RegisterMenu
 from menus.LoginMenu import LoginMenu
@@ -13,11 +14,6 @@ from logic_layer.utils.TerminalClearner import TerminalCleaner
 from presentation_layer.data_interfaces.ServiceEngineerInterface import ServiceEngineerInterface
 from presentation_layer.data_interfaces.SystemAdministratorInterface import SystemAdministratorInterface
 from presentation_layer.data_interfaces.SuperAdministratorInterface import SuperAdministratorInterface
-
-# class Roles(Enum):
-#     SERVICE_ENGINEER = 1
-#     SYSTEM_ADMINISTRATOR = 2
-#     SUPER_ADMINISTRATOR = 3
 
 
 class Home:
@@ -48,16 +44,19 @@ class Home:
                 else:
                     print("Invalid input!")
             else:
-                match Session.user:
-                    case 1:
+                match Session.user.role:
+                    case Roles.SERVICE_ENGINEER:
                         ServiceEngineerInterface.start(Session.user)
-                    case 2:
+                    case Roles.SYSTEM_ADMINISTRATOR:
                         SystemAdministratorInterface.start(Session.user)
-                    case 3:
+                    case Roles.SUPER_ADMINISTRATOR:
                         SuperAdministratorInterface.start(Session.user)
                     case _:
-                        continue
-                        
+                        print("INVALID ROLE")
+                        print(Session.user)
+                        print(Session.user.role)
+                        print("DEBUG:", Session.user.role, type(Session.user.role))
+                        Session.set_loggedin_false()
 
 
     @classmethod

@@ -25,8 +25,8 @@ class GetDataService:
             print(f"- {username} ({role}): {first_name} {last_name}")
 
     def get_user(self, username: str, password: str):
-        print(type(self.super_admin_))
-        print(self.super_admin_)
+        # print(type(self.super_admin_))
+        # print(self.super_admin_)
         for u in self.super_admin_:
             if u["username"] == username and u["password"] == password:
                 return u

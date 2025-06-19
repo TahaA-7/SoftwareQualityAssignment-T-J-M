@@ -6,7 +6,8 @@ class ServiceEngineerInterface():
         pass
 
     def start(self):
-        pass
+        while True:
+            input("hoi")
 
     def update_self_password(self):
         new_password = input("Please enter new password")
