@@ -3,6 +3,8 @@ from access_layer.db.TravellerData import traveller_data
 from access_layer.db.ScooterData import scooter_data
 from access_layer.db.LogData import log_data
 
+from access_layer.db.UserData import user_data
+
 import hashlib
 
 class UpdateDataService:
@@ -11,16 +13,37 @@ class UpdateDataService:
         self.traveller_ = traveller_data()
         self.scooter_ = scooter_data()
         self.log_ = log_data()
+        self.user_data = user_data()
 
     def hash_password(self, plain_password):
         return hashlib.sha256(plain_password.encode()).hexdigest()
 
-    def updateUser_profile(self):
+    def update_ServiceEngineer(self):
         username = input("Username to update: ").strip()
-        first_name = input("New first name: ").strip()
-        last_name = input("New last name: ").strip()
-        self.user_.update_user_profile(username, first_name, last_name)
-        print("User profile updated.")
+
+        for user in self.user_.get_all_users():
+            if user[0].lower() == username.lower() and user[1].lower() == "service_engineer":
+                first_name = input("New first name: ").strip()
+                last_name = input("New last name: ").strip()
+                self.user_.update_user_profile(username, first_name, last_name)
+                print("User profile updated.")
+                return
+
+        print("No Service engineer with that username.")
+
+    def update_SystemAdmin(self):
+        username = input("Username to update: ").strip()
+
+        for user in self.user_.get_all_users():
+            if user[0].lower() == username.lower() and user[1].lower() == "system_admin":
+                first_name = input("New first name: ").strip()
+                last_name = input("New last name: ").strip()
+                self.user_.update_user_profile(username, first_name, last_name)
+                print("User profile updated.")
+                return
+
+        print("No System Administrator with that username.")
+
 
     def updateUser_password(self):
         username = input("Username to update password for: ").strip()
