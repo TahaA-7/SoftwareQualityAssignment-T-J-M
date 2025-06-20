@@ -4,78 +4,78 @@ from .ServiceEngineerInterface import ServiceEngineerInterface
 class SuperAdministratorInterface(SystemAdministratorInterface):
     '''
     omitted methods:
-        update_self_password
+        update_cls_password
         ALL OWN ACCOUNT METHODS because hardcoded
     '''
-    def __init__(self):
+    def __init__(cls):
         pass
 
     # CHECK ALL USERS
-    def check_users_and_roles(self):
-        SystemAdministratorInterface.check_users_and_roles(self)
+    def check_users_and_roles(cls):
+        SystemAdministratorInterface.check_users_and_roles(cls)
     # SERVICE ENGINEER
-    def add_service_engineer(self):
-        SystemAdministratorInterface.add_service_engineer(self)
-    def update_service_engineer(self):
+    def add_service_engineer(cls):
+        SystemAdministratorInterface.add_service_engineer(cls)
+    def update_service_engineer(cls):
         # account and profile
-        SystemAdministratorInterface.update_service_engineer(self)
-    def delete_service_engineer(self):
-        SystemAdministratorInterface.delete_service_engineer(self)
-    def reset_service_engineer_password(self):
-        SystemAdministratorInterface.reset_service_engineer_password(self)
+        SystemAdministratorInterface.update_service_engineer(cls)
+    def delete_service_engineer(cls):
+        SystemAdministratorInterface.delete_service_engineer(cls)
+    def reset_service_engineer_password(cls):
+        SystemAdministratorInterface.reset_service_engineer_password(cls)
     # LOG
-    def view_log_single_or_multiple(self):
-        SystemAdministratorInterface.view_log_single_or_multiple(self)
+    def view_log_single_or_multiple(cls):
+        SystemAdministratorInterface.view_log_single_or_multiple(cls)
     # TRAVELLER
-    def view_traveller(self):
-        SystemAdministratorInterface.view_traveller(self)
-    def add_traveller(self):
-        SystemAdministratorInterface.add_traveller(self)
-    def update_traveller(self):
-        SystemAdministratorInterface.update_traveller(self)
-    def delete_traveller(self):
-        SystemAdministratorInterface.delete_scooter(self)
+    def view_traveller(cls):
+        SystemAdministratorInterface.view_traveller(cls)
+    def add_traveller(cls):
+        SystemAdministratorInterface.add_traveller(cls)
+    def update_traveller(cls):
+        SystemAdministratorInterface.update_traveller(cls)
+    def delete_traveller(cls):
+        SystemAdministratorInterface.delete_scooter(cls)
     # SCOOTER
-    def add_scooter(self):
-        SystemAdministratorInterface.add_scooter(self)
-    def update_scooter(self):
-        SystemAdministratorInterface.update_scooter(self)
-    def delete_scooter(self):
-        SystemAdministratorInterface.delete_scooter(self)
+    def add_scooter(cls):
+        SystemAdministratorInterface.add_scooter(cls)
+    def update_scooter(cls):
+        SystemAdministratorInterface.update_scooter(cls)
+    def delete_scooter(cls):
+        SystemAdministratorInterface.delete_scooter(cls)
 
-    def add_system_administrator(self):
+    def add_system_administrator(cls):
         pass
 
-    def update_system_administrator(self):
+    def update_system_administrator(cls):
         # account and profile
         pass
 
-    def delete_system_administrator(self):
+    def delete_system_administrator(cls):
         pass
 
-    def reset_system_administrator_password(self):
+    def reset_system_administrator_password(cls):
         pass
 
-    def make_or_restore_backup(self):
+    def make_or_restore_backup(cls):
         pass
 
-    def handle_backup_key(self):
+    def handle_backup_key(cls):
         foo = None
         if foo == "make":
-            SystemAdministratorInterface.make_backend_backup(self)
+            SystemAdministratorInterface.make_backend_backup(cls)
         elif foo == "share":
-            backup_key = self.__share_backup_key(self)
+            backup_key = cls.__share_backup_key(cls)
         elif foo == "generate":
-            self.__generate_backup_key(self)
+            cls.__generate_backup_key(cls)
         elif foo == "revoke":
-            self.__revoke_backup_key(self)
+            cls.__revoke_backup_key(cls)
         pass
 
-    def __share_backup_key(self):
+    def __share_backup_key(cls):
         pass
 
-    def __generate_backup_key(self):
+    def __generate_backup_key(cls):
         pass
 
-    def __revoke_backup_key(self):
+    def __revoke_backup_key(cls):
         pass

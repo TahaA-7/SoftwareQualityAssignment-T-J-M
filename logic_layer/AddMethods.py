@@ -10,31 +10,18 @@ from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
 import re
 
-class AddDataService:
+class AddDataService():
     def __init__(self):
         self.user_ = user_data()
         self.traveller_ = traveller_data()
         self.scooter_ = scooter_data()
         self.log_ = log_data()
 
-    def addUser(self):
-        username = input("Username (8-10 chars): ").strip()
-        password = input("Password (min 12 chars): ").strip()
-        role = input("Role (service_engineer/system_admin): ").strip()
-        first_name = input("First Name: ").strip()
-        last_name = input("Last Name: ").strip()
-
-        # Simple validation
-        if len(username) < 8 or len(username) > 10:
-            print("Invalid username length.")
-            return
-        if len(password) < 12:
-            print("Password too short.")
-            return
-
-        hashed = PasswordHasherSalter.hash_password(password)
-        self.user_.add_user(username, hashed, role, first_name, last_name)
-        print("User added successfully.")
+    def addUser(self, username, password, first_name, last_name):
+        hashed_salted = PasswordHasherSalter.hash_salt_password(password)
+        added_user = self.user_.add_user(username, hashed_salted, first_name, last_name)
+        print("User added successfully.") if added_user else "Oops, user couldn't be registered"
+        return added_user
 
     def addScooter(self):
         serial = input("Serial Number: ").strip()

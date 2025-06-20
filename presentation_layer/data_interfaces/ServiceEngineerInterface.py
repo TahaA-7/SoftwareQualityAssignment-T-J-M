@@ -1,15 +1,26 @@
-import logic_layer.utils.StringValidations as StringValidations
+from logic_layer.utils.StringValidations import StringValidations
+from getpass import getpass
 
 class ServiceEngineerInterface():
     # service engineer is standard user
-    def __init__(self, ):
+    def __init__(cls, ):
         pass
 
-    def start(self):
+    @classmethod
+    def start(cls):
+        print("""Welcome to service engineer interface'
+-   -   -   -   -   -   -""")
         while True:
-            input("hoi")
+            user_choice = cls.__handle_input_length(getpass(
+f"""What do you want to do?:
+[1] update own password
+[2] update a scooter's attributes
+[3] search a scooter
 
-    def update_self_password(self):
+[L] logout\n"""))
+
+    @classmethod
+    def update_own_password(cls):
         new_password = input("Please enter new password")
         if StringValidations.is_valid_password(new_password):
             return False
@@ -17,11 +28,14 @@ class ServiceEngineerInterface():
             # update_password
             pass
 
-    def update_scooter_attributes(self):
+    @classmethod
+    def update_scooter_attributes(cls):
+        # print scooters
         # if user is service engineer, rights are limited
         pass
 
-    def view_scooter(self):
+    @classmethod
+    def view_scooter(cls):
         # search scooter info
         '''
         Note 2: The search function must accept reasonable data fields as a search key. It must also accept
@@ -30,5 +44,7 @@ class ServiceEngineerInterface():
         '''
         pass
 
-    def foo(self):
-        print("hi")
+    @classmethod
+    def __handle_input_length(cls, inp):
+        user_inp = inp[-1].upper() if len(inp) > 0 else " "
+        return user_inp

@@ -12,9 +12,6 @@ class UpdateDataService:
         self.scooter_ = scooter_data()
         self.log_ = log_data()
 
-    def hash_password(self, plain_password):
-        return hashlib.sha256(plain_password.encode()).hexdigest()
-
     def updateUser_profile(self):
         username = input("Username to update: ").strip()
         first_name = input("New first name: ").strip()
@@ -28,8 +25,8 @@ class UpdateDataService:
         if len(new_password) < 12:
             print("Password too short.")
             return
-        hashed = self.hash_password(new_password)
-        self.user_.update_user_password(username, hashed)
+        hashed_salted = self.hashed_salted_password(new_password)
+        self.user_.update_user_password(username, hashed_salted)
         print("Password updated.")
 
     def updateTraveller(self):

@@ -60,7 +60,8 @@ f"""Please select a field and update it:
     ○ must be unique and have a length of at least 8 characters
     ○ must be no longer than 10 characters
     ○ must be started with a letter or underscores (_)
-    ○ can contain letters (a-z), numbers (0-9), underscores (_), apostrophes ('), and periods (,):\n""")
+    ○ can contain letters (a-z), numbers (0-9), underscores (_), apostrophes ('), and periods (,)
+    ○ no distinction between lowercase and uppercase letters (case-insensitive):\n""")
         if StringValidations.is_valid_username(username_input) == False:
             print("Invalid username")
             time.sleep(0.75)
@@ -99,7 +100,8 @@ f"""Please select a field and update it:
     def __handle_submit(cls):
         # if "" not in [cls.username, cls.email, cls.password]:
         if "" not in [cls.username, cls.password, cls.first_name, cls.last_name]:
-            added_user = AddDataService.addUser(cls.username, cls.password, cls.first_name, cls.last_name)
+            add_Data_Service_obj = AddDataService()
+            added_user = add_Data_Service_obj.addUser(cls.username, cls.password, cls.first_name, cls.last_name)
             if added_user != None:
                 print("User registered succesfully and is now awaiting approval by an admin.")
             else:

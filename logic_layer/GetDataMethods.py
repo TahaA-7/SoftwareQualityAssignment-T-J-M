@@ -3,11 +3,14 @@ from access_layer.db.TravellerData import traveller_data
 from access_layer.db.ScooterData import scooter_data
 from access_layer.db.LogData import log_data
 
+from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
+
 import json
 import os
 
-class GetDataService:
+user_keys_tuple = ('username', 'password', 'role', 'first_name', 'last_name', 'is_active')
 
+class GetDataService:
     def __init__(self):
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         json_path = os.path.join(base_dir, "access_layer", "superadministrators.json")
@@ -27,12 +30,15 @@ class GetDataService:
     def get_user(self, username: str, password: str):
         # print(type(self.super_admin_))
         # print(self.super_admin_)
+        username = username.lower() # because must be case insensitive
         for u in self.super_admin_:
             if u["username"] == username and u["password"] == password:
                 return u
-        for u in self.user_:
-            if u.username == username and u.password == password and u.is_active == True:
-                return u
+        for u_tuple in self.user_.get_all_users():
+            u_obj = dict(zip(user_keys_tuple, u_tuple))
+            print(username + " " + u_obj['username'])
+            if u_obj['username'] == username and PasswordHasherSalter.verify_password(password, u_obj['password']) and u_obj['is_active'] == True:
+                return u_obj
         return None
 
     def search_scooters(self):

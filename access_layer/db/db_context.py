@@ -1,7 +1,11 @@
 import sqlite3
 from contextlib import contextmanager
 
+from presentation_layer.utils.Roles import Roles
+from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
+
+initial_dummy_pass = PasswordHasherSalter.hash_salt_password("sV5~8lgS|ri%")
 class DBContext:
     def __init__(self, db_name='urban_mobility.db'):
         self.db_name = db_name
@@ -46,13 +50,36 @@ class DBContext:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     username TEXT PRIMARY KEY,
-                    hashed_password TEXT,
+                    hashed_salted_password TEXT,
                     role TEXT,
                     first_name TEXT,
                     last_name TEXT,
-                    registration_date TEXT
+                    registration_date TEXT,
+                    is_active BOOL
                 )
             ''')
+            # Seed user with dummy
+            cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc_",))
+            if cursor.fetchone() is None:
+                cursor.execute('''
+                    INSERT INTO users (
+                        username,
+                        hashed_salted_password,
+                        role,
+                        first_name,
+                        last_name,
+                        registration_date,
+                        is_active
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    "DummyAcc_",
+                    initial_dummy_pass,
+                    Roles.SERVICE_ENGINEER.value,
+                    "Dummy",
+                    "Dumdum",
+                    None,
+                    True
+                ))
 
             # Scooter table
             cursor.execute('''

@@ -26,8 +26,8 @@ class Home:
         # getpass hides the input
         getpass(f" -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -\nPress enter to continue ")
         while True:
+            TerminalCleaner.clear_terminal()
             if not Session.logged_in:
-                TerminalCleaner.clear_terminal()
                 print("""What do you want to do?
 [R] register
 [L] login
@@ -46,11 +46,11 @@ class Home:
             else:
                 match Session.user.role:
                     case Roles.SERVICE_ENGINEER:
-                        ServiceEngineerInterface.start(Session.user)
+                        ServiceEngineerInterface.start()  # start(Session.user)
                     case Roles.SYSTEM_ADMINISTRATOR:
-                        SystemAdministratorInterface.start(Session.user)
+                        SystemAdministratorInterface.start()
                     case Roles.SUPER_ADMINISTRATOR:
-                        SuperAdministratorInterface.start(Session.user)
+                        SuperAdministratorInterface.start()
                     case _:
                         print("INVALID ROLE")
                         print(Session.user)
