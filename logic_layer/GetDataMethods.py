@@ -36,8 +36,8 @@ class GetDataService:
                 return u
         for u_tuple in self.user_.get_all_users():
             u_obj = dict(zip(user_keys_tuple, u_tuple))
-            print(username + " " + u_obj['username'])
-            if u_obj['username'] == username and PasswordHasherSalter.verify_password(password, u_obj['password']) and u_obj['is_active'] == True:
+            # print(username + " " + u_obj['username'])
+            if u_obj['username'].lower() == username and PasswordHasherSalter.verify_password(password, u_obj['password']):
                 return u_obj
         return None
 

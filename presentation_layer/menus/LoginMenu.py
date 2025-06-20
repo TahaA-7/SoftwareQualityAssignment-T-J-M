@@ -66,10 +66,15 @@ f"""Please select a field and update it:
             obj = GetDataService()
             fetched_user = obj.get_user(cls.username, cls.password)
             if fetched_user != None:
-                cls.user = fetched_user
-                print("Login succesfull")
-                time.sleep(0.75)
-                return True
+                if fetched_user['is_active']:
+                    cls.user = fetched_user
+                    print("Login succesfull")
+                    time.sleep(0.5)
+                    return True
+                else:
+                    print("User is awaiting registration approval or is blacklisted")
+                    time.sleep(0.5)
+                    return False
             else:
                 print("Error: no user found with current credentials")
                 time.sleep(0.75)
