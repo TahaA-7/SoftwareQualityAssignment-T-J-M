@@ -7,6 +7,8 @@ from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.AddMethods import AddDataService
 from logic_layer.utils.Logger import Logger
 
+from logic_layer.utils.TerminalClearner import TerminalCleaner
+
 class RegisterMenu:
     # initialise each as "", from then each are individually manipulable
     username = password = first_name = last_name = ""
@@ -21,6 +23,7 @@ class RegisterMenu:
 
     @classmethod
     def register(cls):
+        TerminalCleaner.clear_terminal()
         print("""Welcome to register page'
 -   -   -   -   -   -   -""")
         while True:

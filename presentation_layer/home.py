@@ -48,9 +48,9 @@ class Home:
                     case Roles.SERVICE_ENGINEER:
                         ServiceEngineerInterface.start()  # start(Session.user)
                     case Roles.SYSTEM_ADMINISTRATOR:
-                        SystemAdministratorInterface.start()
+                        SystemAdministratorInterface.system_start()
                     case Roles.SUPER_ADMINISTRATOR:
-                        SuperAdministratorInterface.start()
+                        SuperAdministratorInterface.super_start()
                     case _:
                         print("INVALID ROLE")
                         print(Session.user)

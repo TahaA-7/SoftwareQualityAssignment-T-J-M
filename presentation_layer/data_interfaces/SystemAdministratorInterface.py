@@ -25,7 +25,8 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
         cls.update_data_methods = UpdateDataService()
         cls.backup_methods = BackupMethods()
 
-    def menu(cls):
+    @classmethod
+    def system_start(cls):
         while True:
             print("\n--- System Administrator Menu ---")
             print("[1] Check the list of users and their roles")

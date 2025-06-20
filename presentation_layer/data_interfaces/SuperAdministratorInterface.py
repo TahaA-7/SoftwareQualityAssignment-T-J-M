@@ -11,6 +11,8 @@ from logic_layer.utils.StringValidations import StringValidations
 
 from getpass import getpass
 
+from utils.Session import Session
+
 class SuperAdministratorInterface():
     '''
     omitted methods:
@@ -24,7 +26,8 @@ class SuperAdministratorInterface():
         cls.update_data_methods = UpdateDataService()
         cls.backup_methods = BackupMethods()
 
-    def menu(cls):
+    @classmethod
+    def super_start(cls):
         while True:
             print("\n--- Super Administrator Menu ---")
             print("[1] Add a new System Administrator")
@@ -58,6 +61,7 @@ class SuperAdministratorInterface():
                     cls.view_log_single_or_multiple()
                 case '0':
                     print("Exiting Super Administrator menu.")
+                    Session.set_loggedin_false()
                     break
                 case _:
                     print("Invalid choice. Please enter a valid number.")

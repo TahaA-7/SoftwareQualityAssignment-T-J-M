@@ -9,6 +9,8 @@ from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.GetDataMethods import GetDataService
 from logic_layer.utils.Logger import Logger
 
+from logic_layer.utils.TerminalClearner import TerminalCleaner
+
 # from data_interfaces.SystemAdministratorInterface import SystemAdministratorInterface # temp
 
 class LoginMenu:
@@ -20,6 +22,7 @@ class LoginMenu:
     
     @classmethod
     def login(cls):
+        TerminalCleaner.clear_terminal()
         # from home import Home # Place here instead of atop the file to avoid circular import
         print("""Welcome to login page'
 -   -   -   -   -   -   -""")
@@ -67,8 +70,13 @@ f"""Please select a field and update it:
             obj = GetDataService()
             fetched_user = obj.get_user(cls.username, cls.password)
             if fetched_user != None:
-                if fetched_user['is_active']:
-                    Logger.log(fetched_user.userName, "Logged in", additional_info=fetched_user.role, suspicious=False)
+                if fetched_user['role'] == 3:
+                    cls.user = fetched_user
+                    print("Login succesfull")
+                    time.sleep(0.5)
+                    return True
+                elif fetched_user['is_active']:
+                    Logger.log(fetched_user['username'], "Logged in", additional_info=fetched_user['role'], suspicious=False)
                     cls.user = fetched_user
                     print("Login succesfull")
                     time.sleep(0.5)
