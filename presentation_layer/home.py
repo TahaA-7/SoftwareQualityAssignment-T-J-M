@@ -64,11 +64,6 @@ class Home:
         user_inp = inp[-1].upper() if len(inp) > 0 else " "
         return user_inp
 
-    @classmethod
-    def set_loggedin_true(cls, fetched_user=None):
-        cls.logged_in = True
-        cls.user = fetched_user
-
 
 if __name__ == '__main__':
     # pip install maskpass

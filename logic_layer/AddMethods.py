@@ -8,7 +8,7 @@ from DataModels.TravellerModel import Traveller
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
-import re
+import re, datetime, uuid
 
 class AddDataService():
     def __init__(self):
@@ -37,12 +37,14 @@ class AddDataService():
         out_of_service = input("Is out of service (y/n): ").lower() == 'y'
         mileage = float(input("Mileage (km): "))
         last_maint = input("Last maintenance date (YYYY-MM-DD): ")
+        in_service_date = datetime.datetime()
 
-        scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint)
+        scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
         self.scooter_.add_scooter(scooter)
         print("Scooter added successfully.")
 
     def addTraveller(self):
+        customer_id = str(uuid.uuid4())
         first_name = input("First name: ").strip()
         last_name = input("Last name: ").strip()
         birthday = input("Birthday (YYYY-MM-DD): ")
@@ -54,10 +56,11 @@ class AddDataService():
         email = input("Email: ")
         phone = input("Phone (8 digits): ")
         license_number = input("Driving license (X/DDDDDDD): ")
+        registration_date = datetime.datetime()
 
-        traveller = Traveller(first_name, last_name, birthday, gender,
+        traveller = Traveller(customer_id, first_name, last_name, birthday, gender,
                             street, number, zip_code, city, email,
-                            phone, license_number)
+                            phone, license_number, registration_date)
 
         self.traveller_.add_traveller(traveller)
         print("Traveller added successfully.")

@@ -3,6 +3,12 @@ from access_layer.db.TravellerData import traveller_data
 from access_layer.db.ScooterData import scooter_data
 from access_layer.db.LogData import log_data
 
+from DataModels.ScooterModel import Scooter
+
+from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
+
+from datetime import datetime
+
 import hashlib
 
 class UpdateDataService:
@@ -19,15 +25,10 @@ class UpdateDataService:
         self.user_.update_user_profile(username, first_name, last_name)
         print("User profile updated.")
 
-    def updateUser_password(self):
-        username = input("Username to update password for: ").strip()
-        new_password = input("New password: ").strip()
-        if len(new_password) < 12:
-            print("Password too short.")
-            return
-        hashed_salted = self.hashed_salted_password(new_password)
-        self.user_.update_user_password(username, hashed_salted)
-        print("Password updated.")
+    def updateUser_password(self, username, password):
+        hashed_salted = PasswordHasherSalter.hash_salt_password(password)
+        is_updated_bool = self.user_.update_user_password(username, hashed_salted)
+        return is_updated_bool
 
     def updateTraveller(self):
         customer_id = input("Traveller ID: ").strip()
@@ -44,20 +45,21 @@ class UpdateDataService:
         self.traveller_.update_traveller(customer_id, field, new_value)
         print("Traveller updated.")
  
+    def updateScooterAttributes(self, scooter_obj: Scooter, SoC, target_SoC, location, out_of_service_status, mileage, last_maintenance):
+        SoC = SoC if SoC != "" else None
+        target_SoC_min, target_SoC_max = target_SoC.split("---") if target_SoC.count("---") == 1 else None
+        lat, long = location.split('---') if location.count("---") == 1 else None
+        out_of_service_status = out_of_service_status if out_of_service_status != "" else None
+        mileage = mileage if mileage != "" else None
+        last_maintenance = last_maintenance if datetime.strptime(last_maintenance, "%Y-%m-%d") else None
+
+        updated_scooter = self.scooter_.update_scooter_attributes(scooter_obj, SoC, 
+            target_SoC_min, target_SoC_max, lat, long, out_of_service_status, mileage, last_maintenance)
+        return updated_scooter
+
     def updateScooter(self):
-        serial = input("Scooter serial number: ").strip()
-        field = input("Which field to update (e.g., state_of_charge, mileage): ").strip()
-        value = input("New value: ").strip()
+        pass
 
-        allowed_fields = [
-            'brand', 'model', 'top_speed', 'battery_capacity',
-            'state_of_charge', 'target_soc_min', 'target_soc_max',
-            'latitude', 'longitude', 'out_of_service', 'mileage',
-            'last_maintenance_date'
-        ]
-        if field not in allowed_fields:
-            print("Invalid field.")
-            return
-
-        self.scooter_.update_scooter(serial, field, value)
-        print("Scooter updated.")
+    def handle_input_length(self, inp: str):
+        user_inp = inp[-1].upper() if len(inp) > 0 else " "
+        return user_inp

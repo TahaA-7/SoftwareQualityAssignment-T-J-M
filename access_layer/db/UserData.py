@@ -38,10 +38,14 @@ class user_data:
             ''', (first_name, last_name, username.lower()))
 
     def update_user_password(self, username, hashed_salted_password):
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                UPDATE users
-                SET hashed_salted_password = ?
-                WHERE username = ?
-            ''', (hashed_salted_password, username.lower()))
+        try:
+            with self.db.connect() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    UPDATE users
+                    SET hashed_salted_password = ?
+                    WHERE username = ?
+                ''', (hashed_salted_password, username.lower()))
+            return True
+        except Exception:
+            return False

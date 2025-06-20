@@ -5,7 +5,7 @@ class log_data:
         self.db = DBContext()
 
     def get_logs(self):
-        with self.connect() as conn:
+        with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''
                 SELECT timestamp, username, description, additional_info, suspicious

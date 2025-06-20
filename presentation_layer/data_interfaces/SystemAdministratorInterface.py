@@ -1,11 +1,45 @@
 from .ServiceEngineerInterface import ServiceEngineerInterface
+
+from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
+
 from DataModels.UserModel import User
 import random, string
 
-class SystemAdministratorInterface(ServiceEngineerInterface):
-    def __init__(cls):
-        super().__init__()
+from getpass import getpass
+
+from utils.Session import Session
+
+class SystemAdministratorInterface():
+    Parent = ServiceEngineerInterface()
+
+
+    @classmethod
+    def start(cls):
+        print("""Welcome to service engineer interface'
+-   -   -   -   -   -   -""")
+        while True:
+            user_choice = StringValidations.handle_input_length(getpass(
+f"""What do you want to do?:
+[1] update own password
+[2] update a scooter's attributes
+[3] search a scooter
+
+[L] logout\n"""))
+            match user_choice:
+                case '1':
+                    ServiceEngineerInterface.update_own_password()
+                case '2':
+                    ServiceEngineerInterface.update_scooter_attributes()
+                case '3':
+                    ServiceEngineerInterface.view_scooter()
+
+                case 'L':
+                    Session.set_loggedin_false()
+                    break
+                case _:
+                    print("Invalid input!")
+                    continue
 
     # CHECK ALL USERS
     @classmethod
@@ -47,7 +81,7 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
         # return temp_password
 
     @classmethod
-    def generate_hashed_salted_password(cls):
+    def __generate_hashed_salted_password(cls):
         specials = "~!@#$%&_-+=`|\\(){}[]:;'<>,.?/"
         temp_password = ""
         while True:
@@ -122,3 +156,8 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
     @classmethod
     def delete_scooter(cls):
         pass
+
+
+    # SERVICE ENGINEER METHODS
+    def __view_scooter(cls):
+        ServiceEngineerInterface.__view_scooter()

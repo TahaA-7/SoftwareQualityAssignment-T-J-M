@@ -93,6 +93,10 @@ class StringValidations:
 
         return re.match(pattern, str_to_validate) is not None
 
+    @classmethod
+    def handle_input_length(cls, inp: str):
+        return inp[-1].upper() if len(inp) > 0 else " "
+
 
 '''  
 ● Username:

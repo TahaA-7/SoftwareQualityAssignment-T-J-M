@@ -5,6 +5,8 @@ from access_layer.db.LogData import log_data
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
+from DataModels.ScooterModel import Scooter
+
 import json
 import os
 
@@ -41,16 +43,25 @@ class GetDataService:
                 return u_obj
         return None
 
-    def search_scooters(self):
-        search_term = input("Enter keyword to search for scooters: ").strip()
-        results = self.scooter_.search_scooter(search_term)
+    def get_scooter(self, brand_input, model_input):
+        try:
+            result = self.scooter_.get_scooter_single(brand_input, model_input)[0]
+            return result
+        except Exception:
+            return None
+
+    def search_scooters(self, search_string):
+        results = self.scooter_.search_scooter(search_string)
+        # print(results) # [('SC-0001', 'Xia...)]
+        results_list = []
 
         if not results:
             print("No scooters found.")
         else:
             print("Scooters Found:")
             for row in results:
-                print(f"- Serial: {row[0]}, Brand: {row[1]}, Model: {row[2]}, Speed: {row[3]} km/h, Charge: {row[4]}%, Mileage: {row[5]} km")
+                results_list.append(f"- Serial: {row[0]}, Brand: {row[1]}, Model: {row[2]}, Speed: {row[3]} km/h, Charge: {row[4]}%, Mileage: {row[5]} km")
+        return results_list
 
     def search_travellers(self):
         keyword = input("Enter name, email, phone or ID: ").strip()

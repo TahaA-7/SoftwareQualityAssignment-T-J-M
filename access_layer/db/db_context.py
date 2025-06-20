@@ -1,5 +1,7 @@
 import sqlite3
+import os
 from contextlib import contextmanager
+from datetime import datetime
 
 from presentation_layer.utils.Roles import Roles
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
@@ -8,7 +10,8 @@ from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 initial_dummy_pass = PasswordHasherSalter.hash_salt_password("sV5~8lgS|ri%")
 class DBContext:
     def __init__(self, db_name='urban_mobility.db'):
-        self.db_name = db_name
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        self.db_name = os.path.join(base_dir, db_name)
         self._create_tables()
 
     @contextmanager
@@ -46,6 +49,76 @@ class DBContext:
                 )
             ''')
 
+            # Seed travellers
+            cursor.execute("SELECT 1 FROM travellers WHERE customer_id = ?", ("CUST001",))
+            if cursor.fetchone() is None:
+                cursor.execute('''
+                    INSERT INTO travellers (
+                        customer_id,
+                        registration_date,
+                        first_name,
+                        last_name,
+                        birthday,
+                        gender,
+                        street_name,
+                        house_number,
+                        zip_code,
+                        city,
+                        email,
+                        mobile_phone,
+                        driving_license_number
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    "CUST001",
+                    datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    "Alice",
+                    "Willems",
+                    "1996-07-12",
+                    "Female",
+                    "Kanaalstraat",
+                    145,
+                    "1054XD",
+                    "Amsterdam",
+                    "alice.willems@example.com",
+                    "+31612345678",
+                    "DLN-A1234567"
+                ))
+
+            # 2
+            cursor.execute("SELECT 1 FROM travellers WHERE customer_id = ?", ("CUST002",))
+            if cursor.fetchone() is None:
+                cursor.execute('''
+                    INSERT INTO travellers (
+                        customer_id,
+                        registration_date,
+                        first_name,
+                        last_name,
+                        birthday,
+                        gender,
+                        street_name,
+                        house_number,
+                        zip_code,
+                        city,
+                        email,
+                        mobile_phone,
+                        driving_license_number
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    "CUST002",
+                    datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    "Mehdi",
+                    "El Hamdaoui",
+                    "1988-11-23",
+                    "Male",
+                    "Laan van NOI",
+                    78,
+                    "2595AV",
+                    "The Hague",
+                    "mehdi.hamdaoui@example.com",
+                    "+31687654321",
+                    "DLN-B7654321"
+                ))
+
             # User table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
@@ -58,8 +131,8 @@ class DBContext:
                     is_active BOOL
                 )
             ''')
-            # Seed user with dummy
-            cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc_",))
+            # Seed user with dummy service engineer and system engineer
+            cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc1_",))
             if cursor.fetchone() is None:
                 cursor.execute('''
                     INSERT INTO users (
@@ -72,11 +145,32 @@ class DBContext:
                         is_active
                     ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
-                    "DummyAcc_",
+                    "DummyAcc1_",
                     initial_dummy_pass,
                     Roles.SERVICE_ENGINEER.value,
                     "Dummy",
-                    "Dumdum",
+                    "ServiceEngineer",
+                    None,
+                    True
+                ))
+            cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc2_",))
+            if cursor.fetchone() is None:
+                cursor.execute('''
+                    INSERT INTO users (
+                        username,
+                        hashed_salted_password,
+                        role,
+                        first_name,
+                        last_name,
+                        registration_date,
+                        is_active
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    "DummyAcc2_",
+                    initial_dummy_pass,
+                    Roles.SYSTEM_ADMINISTRATOR.value,
+                    "Dummy",
+                    "SystemAdmin",
                     None,
                     True
                 ))
@@ -85,7 +179,7 @@ class DBContext:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS scooters (
                     serial_number TEXT PRIMARY KEY,
-                    in_service_date TEXT,
+                    in_service_date DATE,
                     brand TEXT,
                     model TEXT,
                     top_speed INTEGER,
@@ -93,13 +187,86 @@ class DBContext:
                     state_of_charge INTEGER,
                     target_soc_min INTEGER,
                     target_soc_max INTEGER,
-                    latitude REAL,
-                    longitude REAL,
-                    out_of_service INTEGER,
+                    latitude TEXT,
+                    longitude TEXT,
+                    out_of_service TEXT,
                     mileage REAL,
-                    last_maintenance_date TEXT
+                    last_maintenance_date DATE
                 )
             ''')
+
+            # Seed scooters
+            cursor.execute("SELECT 1 FROM scooters WHERE serial_number = ?", ("SC-0001",))
+            if cursor.fetchone() is None:
+                cursor.execute('''
+                    INSERT INTO scooters (
+                        serial_number,
+                        in_service_date,
+                        brand,
+                        model,
+                        top_speed,
+                        battery_capacity,
+                        state_of_charge,
+                        target_soc_min,
+                        target_soc_max,
+                        latitude,
+                        longitude,
+                        out_of_service,
+                        mileage,
+                        last_maintenance_date
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    "SC-0001",
+                    datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    "Xiaomi",
+                    "M365 Pro",
+                    25,
+                    474,
+                    85,
+                    30,
+                    90,
+                    "52.3676",     # Amsterdam
+                    "4.9041",
+                    "False",
+                    1543.7,
+                    "2024-12-01"
+                ))
+
+            cursor.execute("SELECT 1 FROM scooters WHERE serial_number = ?", ("SC-0002",))
+            if cursor.fetchone() is None:
+                cursor.execute('''
+                    INSERT INTO scooters (
+                        serial_number,
+                        in_service_date,
+                        brand,
+                        model,
+                        top_speed,
+                        battery_capacity,
+                        state_of_charge,
+                        target_soc_min,
+                        target_soc_max,
+                        latitude,
+                        longitude,
+                        out_of_service,
+                        mileage,
+                        last_maintenance_date
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    "SC-0002",
+                    datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    "Segway",
+                    "Ninebot Max",
+                    30,
+                    551,
+                    40,
+                    25,
+                    85,
+                    "51.9244",     # Rotterdam
+                    "4.4777",
+                    "True",
+                    2398.5,
+                    "2025-02-15"
+                ))
 
             # Logs table
             cursor.execute('''
