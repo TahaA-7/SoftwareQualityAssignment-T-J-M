@@ -7,6 +7,7 @@ import time
 from utils.Session import Session
 from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.GetDataMethods import GetDataService
+from logic_layer.utils.Logger import Logger
 
 class LoginMenu:
     username = password = ""
@@ -64,11 +65,13 @@ f"""Please select a field and update it:
             obj = GetDataService()
             fetched_user = obj.get_user(cls.username, cls.password)
             if fetched_user != None:
+                Logger.log(fetched_user.userName, "Logged in", additional_info=fetched_user.role, suspicious=False)
                 cls.user = fetched_user
                 print("Login succesfull")
                 time.sleep(0.75)
                 return True
             else:
+                Logger.log(cls.username, "Unsuccesfull login", additional_info="Invalid credentials", suspicious=True)
                 print("Error: no user found with current credentials")
                 time.sleep(0.75)
                 return False

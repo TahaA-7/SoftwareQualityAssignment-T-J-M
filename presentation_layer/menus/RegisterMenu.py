@@ -5,6 +5,7 @@ from getpass import getpass
 import time
 from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.AddMethods import AddDataService
+from logic_layer.utils.Logger import Logger
 
 class RegisterMenu:
     # initialise each as "", from then each are individually manipulable
@@ -99,10 +100,12 @@ f"""Please select a field and update it:
     def __handle_submit(cls):
         # if "" not in [cls.username, cls.email, cls.password]:
         if "" not in [cls.username, cls.password, cls.first_name, cls.last_name]:
-            added_user = AddDataService.addUser(cls.username, cls.password, cls.first_name, cls.last_name)
+            added_user = AddDataService().addUser(cls.username, cls.password, cls.first_name, cls.last_name)
             if added_user != None:
+                Logger.log(cls.username, "Registered new account")
                 print("User registered succesfully and is now awaiting approval by an admin.")
             else:
+                Logger.log(cls.username, "Registration failed", "User already exists", suspicious=True)
                 print("Error: user already exists")
         else:
             print("""Error: cannot submit because username and/or email and/or password has remained blank,'
