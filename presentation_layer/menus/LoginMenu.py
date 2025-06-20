@@ -4,7 +4,7 @@ import maskpass
 from getpass import getpass
 import time
 
-from utils.Session import Session
+from presentation_layer.utils.Session import Session
 from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.GetDataMethods import GetDataService
 from logic_layer.utils.Logger import Logger

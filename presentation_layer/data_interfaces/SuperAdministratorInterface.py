@@ -11,7 +11,7 @@ from logic_layer.utils.StringValidations import StringValidations
 
 from getpass import getpass
 
-from utils.Session import Session
+from presentation_layer.utils.Session import Session
 
 class SuperAdministratorInterface():
     '''

@@ -6,10 +6,10 @@ import os, sys, platform
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from enum import Enum
-from utils.Roles import Roles
-from utils.Session import Session
-from menus.RegisterMenu import RegisterMenu
-from menus.LoginMenu import LoginMenu
+from presentation_layer.utils.Roles import Roles
+from presentation_layer.utils.Session import Session
+from presentation_layer.menus.RegisterMenu import RegisterMenu
+from presentation_layer.menus.LoginMenu import LoginMenu
 from logic_layer.utils.TerminalClearner import TerminalCleaner
 from presentation_layer.data_interfaces.ServiceEngineerInterface import ServiceEngineerInterface
 from presentation_layer.data_interfaces.SystemAdministratorInterface import SystemAdministratorInterface

@@ -14,7 +14,7 @@ import random, string
 
 from getpass import getpass
 
-from utils.Session import Session
+from presentation_layer.utils.Session import Session
 
 class SystemAdministratorInterface(ServiceEngineerInterface):
     def __init__(cls):

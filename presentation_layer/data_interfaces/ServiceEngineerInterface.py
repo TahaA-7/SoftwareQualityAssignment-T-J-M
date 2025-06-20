@@ -7,7 +7,7 @@ from DataModels.ScooterModel import Scooter
 
 from getpass import getpass
 
-from utils.Session import Session
+from presentation_layer.utils.Session import Session
 
 import maskpass
 
