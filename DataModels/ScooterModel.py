@@ -2,15 +2,16 @@ from datetime import datetime
 
 
 class Scooter:
-    def __init__(self, brand, model, serial_number, top_speed,
+    def __init__(self, serial_number, brand, model, top_speed,
                  battery_capacity, state_of_charge, target_soc_min,
                  target_soc_max, latitude, longitude, out_of_service,
                  mileage, last_maintenance_date):
+        
+        serial_number = serial_number
         self.in_service_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         self.brand = brand
         self.model = model
-        self.serial_number = serial_number
         self.top_speed = top_speed
         self.battery_capacity = battery_capacity
         self.state_of_charge = state_of_charge

@@ -7,20 +7,24 @@ from logic_layer.DeleteMethods import DeleteDataService
 from logic_layer.UpdateMethods import UpdateDataService
 from logic_layer.BackupMethods import BackupMethods
 
-class SuperAdministratorInterface(SystemAdministratorInterface):
+from logic_layer.utils.StringValidations import StringValidations
+
+from getpass import getpass
+
+class SuperAdministratorInterface():
     '''
     omitted methods:
-        update_self_password
+        update_cls_password
         ALL OWN ACCOUNT METHODS because hardcoded
     '''
-    def __init__(self):
-        self.get_data_methods = GetDataService()
-        self.add_data_methods = AddDataService()
-        self.delete_data_methods = DeleteDataService()
-        self.update_data_methods = UpdateDataService()
-        self.backup_methods = BackupMethods()
+    def __init__(cls):
+        cls.get_data_methods = GetDataService()
+        cls.add_data_methods = AddDataService()
+        cls.delete_data_methods = DeleteDataService()
+        cls.update_data_methods = UpdateDataService()
+        cls.backup_methods = BackupMethods()
 
-    def menu(self):
+    def menu(cls):
         while True:
             print("\n--- Super Administrator Menu ---")
             print("[1] Add a new System Administrator")
@@ -37,79 +41,116 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
             match choice:
                 case '1':
-                    self.add_system_administrator()
+                    cls.add_system_administrator()
                 case '2':
-                    self.update_system_administrator()
+                    cls.update_system_administrator()
                 case '3':
-                    self.delete_system_administrator()
+                    cls.delete_system_administrator()
                 case '4':
-                    self.reset_system_administrator_password()
+                    cls.reset_system_administrator_password()
                 case '5':
-                    self.share_backup_key()
+                    cls.share_backup_key()
                 case '6':
-                    self.revoke_backup_key()
+                    cls.revoke_backup_key()
                 case '7':
-                    self.generate_backup_key()
+                    cls.generate_backup_key()
                 case '8':
-                    self.view_log_single_or_multiple()
+                    cls.view_log_single_or_multiple()
                 case '0':
                     print("Exiting Super Administrator menu.")
                     break
                 case _:
                     print("Invalid choice. Please enter a valid number.")
 
+    @classmethod
+    def start(cls):
+        print("""Welcome to service engineer interface'
+-   -   -   -   -   -   -""")
+        while True:
+            user_choice = StringValidations.handle_input_length(getpass(
+f"""What do you want to do?:
+[1] update own password
+[2] update a scooter's attributes
+[3] search a scooter
+
+[L] logout\n"""))
+            match user_choice:
+                case '1':
+                    ServiceEngineerInterface.update_own_password()
+                case '2':
+                    cls.update_scooter_attributes()
+                case '3':
+                    cls.view_scooter()
+
+                case 'L':
+                    Session.set_loggedin_false()
+                    break
+                case _:
+                    print("Invalid input!")
+                    continue
+
     # CHECK ALL USERS
-    def check_users_and_roles(self):
-        SystemAdministratorInterface.check_users_and_roles(self)
+    def check_users_and_roles(cls):
+        SystemAdministratorInterface.check_users_and_roles(cls)
     # SERVICE ENGINEER
-    def add_service_engineer(self):
-        SystemAdministratorInterface.add_service_engineer(self)
-    def update_service_engineer(self):
+    def add_service_engineer(cls):
+        SystemAdministratorInterface.add_service_engineer(cls)
+    def update_service_engineer(cls):
         # account and profile
-        SystemAdministratorInterface.update_service_engineer(self)
-    def delete_service_engineer(self):
-        SystemAdministratorInterface.delete_service_engineer(self)
-    def reset_service_engineer_password(self):
-        SystemAdministratorInterface.reset_service_engineer_password(self)
+        SystemAdministratorInterface.update_service_engineer(cls)
+    def delete_service_engineer(cls):
+        SystemAdministratorInterface.delete_service_engineer(cls)
+    def reset_service_engineer_password(cls):
+        SystemAdministratorInterface.reset_service_engineer_password(cls)
     # LOG
-    def view_log_single_or_multiple(self):
-        SystemAdministratorInterface.view_log_single_or_multiple(self)
+    def view_log_single_or_multiple(cls):
+        SystemAdministratorInterface.view_log_single_or_multiple(cls)
     # TRAVELLER
-    def view_traveller(self):
-        SystemAdministratorInterface.view_traveller(self)
-    def add_traveller(self):
-        SystemAdministratorInterface.add_traveller(self)
-    def update_traveller(self):
-        SystemAdministratorInterface.update_traveller(self)
-    def delete_traveller(self):
-        SystemAdministratorInterface.delete_traveller(self)
+    def view_traveller(cls):
+        SystemAdministratorInterface.view_traveller(cls)
+    def add_traveller(cls):
+        SystemAdministratorInterface.add_traveller(cls)
+    def update_traveller(cls):
+        SystemAdministratorInterface.update_traveller(cls)
+    def delete_traveller(cls):
+        SystemAdministratorInterface.delete_traveller(cls)
 
     # SCOOTER
-    def add_scooter(self):
-        SystemAdministratorInterface.add_scooter(self)
-    def update_scooter(self):
-        SystemAdministratorInterface.update_scooter(self)
-    def delete_scooter(self):
-        SystemAdministratorInterface.delete_scooter(self)
+    @classmethod
+    def add_scooter(cls):
+        SystemAdministratorInterface.add_scooter(cls)
+    @classmethod
+    def update_scooter(cls):
+        SystemAdministratorInterface.update_scooter(cls)
+    @classmethod
+    def delete_scooter(cls):
+        SystemAdministratorInterface.delete_scooter(cls)
 
-    def add_system_administrator(self):
-        self.add_data_methods.addUser()
+    @classmethod
+    def add_system_administrator(cls):
+        cls.add_data_methods.addUser()
 
-    def update_system_administrator(self):
+    @classmethod
+    def update_system_administrator(cls):
         # account and profile
-        self.update_data_methods.update_SystemAdmin()
+        cls.update_data_methods.update_SystemAdmin()
 
-    def delete_system_administrator(self):
-        self.delete_data_methods.deleteSystemAdmin()
+    @classmethod
+    def delete_system_administrator(cls):
+        cls.delete_data_methods.deleteSystemAdmin()
 
-    def reset_system_administrator_password(self):
+    @classmethod
+    def reset_system_administrator_password(cls):
         pass
 
-    def share_backup_key(self):
-        self.backup_methods.assign_backup()
+    @classmethod
+    def share_backup_key(cls):
+        cls.backup_methods.assign_backup()
 
-    def generate_backup_key(self):
-        self.backup_methods.create_backup()
+    @classmethod
+    def generate_backup_key(cls):
+        cls.backup_methods.create_backup()
 
-    def revoke_backup_key(self):
-        self.backup_methods.revoke_backup_code()
+    @classmethod
+    def revoke_backup_key(cls):
+        cls.backup_methods.revoke_backup_code()

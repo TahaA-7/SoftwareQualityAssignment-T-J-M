@@ -5,7 +5,7 @@ class traveller_data:
         self.db = DBContext()
 
     def search_traveller(self, keyword):
-        with self.connect() as conn:
+        with self.db.connect() as conn:
             cursor = conn.cursor()
             keyword = f"%{keyword.lower()}%"
             cursor.execute('''

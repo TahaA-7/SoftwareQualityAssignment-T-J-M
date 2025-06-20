@@ -1,6 +1,6 @@
 # main.py
 
-from db.db_context import DBContext
+from access_layer.db.db_context import DBContext
 
 def main():
     db = DBContext()  # Creates DB and tables if they don't exist

@@ -8,45 +8,20 @@ from DataModels.TravellerModel import Traveller
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
-class AddDataService:
+import re, datetime, uuid
+
+class AddDataService():
     def __init__(self):
         self.user_ = user_data()
         self.traveller_ = traveller_data()
         self.scooter_ = scooter_data()
         self.log_ = log_data()
 
-    def get_int(prompt):
-        while True:
-            try:
-                return int(input(prompt))
-            except ValueError:
-                print("Invalid input. Please enter a whole number.")
-
-    def get_float(prompt):
-        while True:
-            try:
-                return float(input(prompt))
-            except ValueError:
-                print("Invalid input. Please enter a number.")
-
-    def addUser(self):
-        username = input("Username (8-10 chars): ").strip()
-        password = input("Password (min 12 chars): ").strip()
-        role = input("Role (service_engineer/system_admin): ").strip()
-        first_name = input("First Name: ").strip()
-        last_name = input("Last Name: ").strip()
-
-        # Simple validation
-        if len(username) < 8 or len(username) > 10:
-            print("Invalid username length.")
-            return
-        if len(password) < 12:
-            print("Password too short.")
-            return
-
-        hashed = PasswordHasherSalter.hash_password(password)
-        self.user_.add_user(username, hashed, role, first_name, last_name)
-        print("User added successfully.")
+    def addUser(self, username, password, first_name, last_name):
+        hashed_salted = PasswordHasherSalter.hash_salt_password(password)
+        added_user = self.user_.add_user(username, hashed_salted, first_name, last_name)
+        print("User added successfully.") if added_user else "Oops, user couldn't be registered"
+        return added_user
 
     def addScooter(self):
         serial = input("Serial Number: ").strip()
@@ -62,12 +37,14 @@ class AddDataService:
         out_of_service = input("Is out of service (y/n): ").lower() == 'y'
         mileage = self.get_float("Mileage (km): ")
         last_maint = input("Last maintenance date (YYYY-MM-DD): ")
+        in_service_date = datetime.datetime()
 
-        scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint)
+        scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
         self.scooter_.add_scooter(scooter)
         print("Scooter added successfully.")
 
     def addTraveller(self):
+        customer_id = str(uuid.uuid4())
         first_name = input("First name: ").strip()
         last_name = input("Last name: ").strip()
         birthday = input("Birthday (YYYY-MM-DD): ")
@@ -79,10 +56,11 @@ class AddDataService:
         email = input("Email: ")
         phone = input("Phone (8 digits): ")
         license_number = input("Driving license (X/DDDDDDD): ")
+        registration_date = datetime.datetime()
 
-        traveller = Traveller(first_name, last_name, birthday, gender,
+        traveller = Traveller(customer_id, first_name, last_name, birthday, gender,
                             street, number, zip_code, city, email,
-                            phone, license_number)
+                            phone, license_number, registration_date)
 
         self.traveller_.add_traveller(traveller)
         print("Traveller added successfully.")

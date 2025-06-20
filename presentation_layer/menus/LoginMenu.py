@@ -9,6 +9,8 @@ from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.GetDataMethods import GetDataService
 from logic_layer.utils.Logger import Logger
 
+# from data_interfaces.SystemAdministratorInterface import SystemAdministratorInterface # temp
+
 class LoginMenu:
     username = password = ""
     user = None
@@ -65,11 +67,16 @@ f"""Please select a field and update it:
             obj = GetDataService()
             fetched_user = obj.get_user(cls.username, cls.password)
             if fetched_user != None:
-                Logger.log(fetched_user.userName, "Logged in", additional_info=fetched_user.role, suspicious=False)
-                cls.user = fetched_user
-                print("Login succesfull")
-                time.sleep(0.75)
-                return True
+                if fetched_user['is_active']:
+                    Logger.log(fetched_user.userName, "Logged in", additional_info=fetched_user.role, suspicious=False)
+                    cls.user = fetched_user
+                    print("Login succesfull")
+                    time.sleep(0.5)
+                    return True
+                else:
+                    print("User is awaiting registration approval or is blacklisted")
+                    time.sleep(0.5)
+                    return False
             else:
                 Logger.log(cls.username, "Unsuccesfull login", additional_info="Invalid credentials", suspicious=True)
                 print("Error: no user found with current credentials")

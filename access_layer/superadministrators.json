@@ -1,20 +1,7 @@
 [
     {
-        "username": "taha0220",
-        "email": "super@fantastisch.cool",
-        "password": "Five5Four4##",
-        "role": 3
-    },
-    {
-        "username": "jay019",
-        "email": "hanwan@ramcharan.jay",
-        "password": "#000000",
-        "role": 3
-    },
-    {
-        "username": "madhar",
-        "email": "verkeerde_email@op_github.com",
-        "password": "psv",
+        "username": "super_admin",
+        "password": "Admin_123?",
         "role": 3
     }
 ]
