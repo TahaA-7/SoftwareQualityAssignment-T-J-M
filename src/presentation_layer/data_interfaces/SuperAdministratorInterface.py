@@ -25,75 +25,63 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
         while True:
             print("\n--- Super Administrator Menu ---")
 
-            print(">>> SYSTEM ADMINISTRATOR MANAGEMENT")
-            print("[1] Add a new System Administrator")
-            print("[2] Update a System Administrator")
-            print("[3] Delete a System Administrator")
-            print("[4] Reset System Administrator password (temporary password)")
+            print("[1] Update Scooter attributes")
+            print("[2] Search and retrieve Scooter info")
 
-            print("\n>>> SERVICE ENGINEER MANAGEMENT")
-            print("[5] Add a Service Engineer")
-            print("[6] Update a Service Engineer")
-            print("[7] Delete a Service Engineer")
-            print("[8] Reset Service Engineer password")
+            print("\n[3] View list of users and their roles")
+            print("[4] Add a Service Engineer")
+            print("[5] Update a Service Engineer")
+            print("[6] Delete a Service Engineer")
+            print("[7] Reset Service Engineer password")
+            print("[8] View logs")
+            print("[9] Add a Traveller")
+            print("[10] Update a Traveller")
+            print("[11] Delete a Traveller")
+            print("[12] Add a Scooter")
+            print("[13] Update Scooter information")
+            print("[14] Delete a Scooter")
+            print("[15] Search for a Traveller")
 
-            print("\n>>> BACKUP MANAGEMENT")
-            print("[9] Assign a restore code to a System Administrator")
-            print("[10] Revoke a restore code")
-            print("[11] Create a system backup")
-
-            print("\n>>> USERS & LOGS")
-            print("[12] View list of users and their roles")
-            print("[13] View system logs")
-
-            print("\n>>> OWN ACCOUNT")
-            print("[14] Update own profile")
-            print("[15] Delete own account")
-
-            print("\n>>> TRAVELLER MANAGEMENT")
-            print("[16] Add a Traveller")
-            print("[17] Update a Traveller")
-            print("[18] Delete a Traveller")
-            print("[19] Search for a Traveller")
-
-            print("\n>>> SCOOTER MANAGEMENT")
-            print("[20] Add a Scooter")
-            print("[21] Update a Scooter")
-            print("[22] Delete a Scooter")
+            print("\n[16] Add a System Administrator")
+            print("[17] Update a System Administrator")
+            print("[18] Delete a System Administrator")
+            print("[19] Reset System Administrator password")
+            print("[20] Create a system backup")
+            print("[21] Assign a restore code")
+            print("[22] Revoke a restore code")
 
             print("\n[0] Exit")
 
             choice = input("Enter your choice: ")
 
             match choice:
-                case '1': cls.add_system_administrator()
-                case '2': cls.update_system_administrator()
-                case '3': cls.delete_system_administrator()
-                case '4': cls.reset_system_administrator_password()
+                # Service Engineer–level
+                case '1': cls.update_scooter_attributes()
+                case '2': cls.view_scooter()
 
-                case '5': cls.add_service_engineer()
-                case '6': cls.update_service_engineer()
-                case '7': cls.delete_service_engineer()
-                case '8': cls.reset_service_engineer_password()
+                # System Admin–level
+                case '3': cls.check_users_and_roles()
+                case '4': cls.add_service_engineer()
+                case '5': cls.update_service_engineer()
+                case '6': cls.delete_service_engineer()
+                case '7': cls.reset_service_engineer_password()
+                case '8': cls.view_log_single_or_multiple()
+                case '9': cls.add_traveller()
+                case '10': cls.update_traveller()
+                case '11': cls.delete_traveller()
+                case '12': cls.add_scooter()
+                case '13': cls.update_scooter()
+                case '14': cls.delete_scooter()
+                case '15': cls.view_traveller()
 
-                case '9': cls.share_backup_key()
-                case '10': cls.revoke_backup_key()
-                case '11': cls.generate_backup_key()
-
-                case '12': cls.check_users_and_roles()
-                case '13': cls.view_log_single_or_multiple()
-
-                case '14': cls.update_cls_account_profile()
-                case '15': cls.delete_cls_account()
-
-                case '16': cls.add_traveller()
-                case '17': cls.update_traveller()
-                case '18': cls.delete_traveller()
-                case '19': cls.view_traveller()
-
-                case '20': cls.add_scooter()
-                case '21': cls.update_scooter()
-                case '22': cls.delete_scooter()
+                # Super Admin only
+                case '16': cls.add_system_administrator()
+                case '17': cls.update_system_administrator()
+                case '18': cls.delete_system_administrator()
+                case '19': cls.reset_system_administrator_password()
+                case '20': cls.generate_backup_key()
+                case '21': cls.share_backup_key()
+                case '22': cls.revoke_backup_key()
 
                 case '0':
                     print("Exiting Super Administrator menu.")
@@ -105,7 +93,7 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
     # === SUPER ADMIN–ONLY METHODS ===
     @classmethod
     def add_system_administrator(cls):
-        cls.add_data_methods.addUser()
+        cls.add_data_methods.addSystemAdmin()
 
     @classmethod
     def update_system_administrator(cls):
@@ -117,7 +105,7 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
     @classmethod
     def reset_system_administrator_password(cls):
-        print("⚠️ Not yet implemented. Coming soon.")
+        pass
 
     @classmethod
     def share_backup_key(cls):

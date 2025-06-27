@@ -29,14 +29,11 @@ class Home:
             TerminalCleaner.clear_terminal()
             if not Session.logged_in:
                 print("""What do you want to do?
-[R] register
 [L] login
 [E] exit program""")
                 user_inp = cls.__handle_input_length(getpass(""))
                 print(user_inp)
-                if user_inp == 'R':
-                    RegisterMenu.register()
-                elif user_inp == 'L':
+                if user_inp == 'L':
                     LoginMenu.login()
                     #LoginMenu.login()
                 elif user_inp == 'E':

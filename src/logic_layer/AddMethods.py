@@ -8,6 +8,8 @@ from DataModels.TravellerModel import Traveller
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
+from presentation_layer.menus.RegisterMenu import RegisterMenu 
+
 import re, datetime, uuid
 
 class AddDataService():
@@ -16,12 +18,49 @@ class AddDataService():
         self.traveller_ = traveller_data()
         self.scooter_ = scooter_data()
         self.log_ = log_data()
+        self.registerMenu_ = RegisterMenu()
+
+    def get_int(prompt):
+        while True:
+            try:
+                return int(input(prompt))
+            except ValueError:
+                print("Invalid input. Please enter a whole number.")
+
+    def get_float(prompt):
+        while True:
+            try:
+                return float(input(prompt))
+            except ValueError:
+                print("Invalid input. Please enter a number.")
 
     def addUser(self, username, password, first_name, last_name):
         hashed_salted = PasswordHasherSalter.hash_salt_password(password)
         added_user = self.user_.add_user(username, hashed_salted, first_name, last_name)
         print("User added successfully.") if added_user else "Oops, user couldn't be registered"
         return added_user
+    
+    def addSystemAdmin(self):
+        username = self.registerMenu_.handle_username()
+        password = self.registerMenu_.handle_password()
+        first_name = self.registerMenu_.handle_first_name_submit()
+        last_name = self.registerMenu_.handle_last_name_submit()
+
+        hashed_salted = PasswordHasherSalter.hash_salt_password(password)
+
+        self.user_.add_systemAdmin(username, hashed_salted, first_name, last_name)
+        print("User added successfully.")
+
+    def addServiceEngineer(self):
+        username = self.registerMenu_.handle_username()
+        password = self.registerMenu_.handle_password()
+        first_name = self.registerMenu_.handle_first_name_submit()
+        last_name = self.registerMenu_.handle_last_name_submit()
+
+        hashed_salted = PasswordHasherSalter.hash_salt_password(password)
+
+        self.user_.add_serviceEngineer(username, hashed_salted, first_name, last_name)
+        print("User added successfully.")
 
     def addScooter(self):
         serial = input("Serial Number: ").strip()

@@ -17,74 +17,66 @@ from getpass import getpass
 from presentation_layer.utils.Session import Session
 
 class SystemAdministratorInterface(ServiceEngineerInterface):
-    def __init__(cls):
-        super().__init__()
-        cls.get_data_methods = GetDataService()
-        cls.add_data_methods = AddDataService()
-        cls.delete_data_methods = DeleteDataService()
-        cls.update_data_methods = UpdateDataService()
-        cls.backup_methods = BackupMethods()
+    get_data_methods = GetDataService()
+    add_data_methods = AddDataService()
+    delete_data_methods = DeleteDataService()
+    update_data_methods = UpdateDataService()
+    backup_methods = BackupMethods()
 
     @classmethod
     def system_start(cls):
         while True:
             print("\n--- System Administrator Menu ---")
-            print("[1] Check the list of users and their roles")
-            print("[2] Add a new Service Engineer")
-            print("[3] Update an existing Service Engineer account and profile")
-            print("[4] Delete a Service Engineer account")
-            print("[5] Reset Service Engineer password (temporary password)")
-            print("[6] Update own account and profile")
-            print("[7] Delete own account")
-            print("[8] Make a backend system backup")
-            print("[9] Restore a specific backup (with one-use code)")
-            print("[10] View logs file(s)")
-            print("[11] Add a new Traveller")
-            print("[12] Update a Traveller")
-            print("[13] Delete a Traveller")
-            print("[14] Search for Traveller info")
-            print("[15] Add a new Scooter")
-            print("[16] Update a Scooter")
-            print("[17] Delete a Scooter")
-            print("[0] Exit")
+
+            print("[1] Update your own password")
+            print("[2] Update a Scooter")
+            print("[3] Search and retrieve Scooter info")
+
+            print("\n[4] View users and their roles")
+            print("[5] Add a Service Engineer")
+            print("[6] Update a Service Engineer")
+            print("[7] Delete a Service Engineer")
+            print("[8] Reset Service Engineer password (temporary password)")
+            print("[9] Update own account and profile")
+            print("[10] Delete own account")
+            print("[11] Create a system backup")
+            print("[12] Restore a backup (with one-use code)")
+            print("[13] View logs")
+            print("[14] Add a Traveller")
+            print("[15] Update a Traveller")
+            print("[16] Delete a Traveller")
+            print("[17] Add a Scooter")
+            print("[18] Delete a Scooter")
+            print("[19] Search and retrieve Traveller info")
+
+            print("\n[0] Exit")
 
             choice = input("Enter your choice: ")
 
             match choice:
-                case '1':
-                    cls.check_users_and_roles()
-                case '2':
-                    cls.add_service_engineer()
-                case '3':
-                    cls.update_service_engineer()
-                case '4':
-                    cls.delete_service_engineer()
-                case '5':
-                    cls.reset_service_engineer_password()
-                case '6':
-                    cls.update_cls_account_profile()
-                case '7':
-                    cls.delete_cls_account()
-                case '8':
-                    cls.make_backend_backup()
-                case '9':
-                    cls.restore_backend_backup()
-                case '10':
-                    cls.view_log_single_or_multiple()
-                case '11':
-                    cls.add_traveller()
-                case '12':
-                    cls.update_traveller()
-                case '13':
-                    cls.delete_traveller()
-                case '14':
-                    cls.view_traveller()
-                case '15':
-                    cls.add_scooter()
-                case '16':
-                    cls.update_scooter()
-                case '17':
-                    cls.delete_scooter()
+                # Service Engineer functionality
+                case '1': cls.update_own_password()
+                case '2': cls.update_scooter()
+                case '3': cls.__view_scooter()
+
+                # System Admin functionality
+                case '4': cls.check_users_and_roles()
+                case '5': cls.add_service_engineer()
+                case '6': cls.update_service_engineer()
+                case '7': cls.delete_service_engineer()
+                case '8': cls.reset_service_engineer_password()
+                case '9': cls.update_cls_account_profile()
+                case '10': cls.delete_cls_account()
+                case '11': cls.make_backend_backup()
+                case '12': cls.restore_backend_backup()
+                case '13': cls.view_log_single_or_multiple()
+                case '14': cls.add_traveller()
+                case '15': cls.update_traveller()
+                case '16': cls.delete_traveller()
+                case '17': cls.add_scooter()
+                case '18': cls.delete_scooter()
+                case '19': cls.view_traveller()
+
                 case '0':
                     print("Exiting System Administrator menu.")
                     Session.set_loggedin_false()

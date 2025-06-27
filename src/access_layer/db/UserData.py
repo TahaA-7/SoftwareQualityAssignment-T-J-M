@@ -22,6 +22,30 @@ class user_data:
                 return True
             except Exception:
                 return False
+            
+    def add_serviceEngineer(self, username, hashed_salted_password, first_name, last_name):
+        with self.db.connect() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute('''
+                    INSERT INTO users (username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
+                    VALUES (?, ?, ?, ?, ?, datetime('now'), ?)
+                ''', (username.lower(), hashed_salted_password, Roles.SERVICE_ENGINEER.value, first_name, last_name, False))
+                return True
+            except Exception:
+                return False
+            
+    def add_systemAdmin(self, username, hashed_salted_password, first_name, last_name):
+        with self.db.connect() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute('''
+                    INSERT INTO users (username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
+                    VALUES (?, ?, ?, ?, ?, datetime('now'), ?)
+                ''', (username.lower(), hashed_salted_password, Roles.SYSTEM_ADMINISTRATOR.value, first_name, last_name, False))
+                return True
+            except Exception:
+                return False
 
     def delete_user(self, username):
         with self.db.connect() as conn:

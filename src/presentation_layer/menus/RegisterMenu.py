@@ -4,7 +4,6 @@ import maskpass
 from getpass import getpass
 import time
 from logic_layer.utils.StringValidations import StringValidations
-from logic_layer.AddMethods import AddDataService
 from logic_layer.utils.Logger import Logger
 
 from logic_layer.utils.TerminalClearner import TerminalCleaner
@@ -59,7 +58,7 @@ f"""Please select a field and update it:
                     break
 
     @classmethod
-    def __handle_username(cls):
+    def handle_username(cls):
         username_input = input("""Please enter your username:
     ○ must be unique and have a length of at least 8 characters
     ○ must be no longer than 10 characters
@@ -73,6 +72,7 @@ f"""Please select a field and update it:
             print("Username set succesfully")
             time.sleep(0.75)
             cls.username = username_input
+        return cls.username
 
     # def handle_email(cls):
     #     email_input = input("Please enter your email. It is used for password recovery, so please use your legitimate one:\n")
@@ -82,7 +82,7 @@ f"""Please select a field and update it:
     #         cls.email = email_input.lower()
 
     @classmethod
-    def __handle_password(cls):
+    def handle_password(cls):
         print(r"""Password:
     ○ must have a length of at least 12 characters
     ○ must be no longer than 30 characters
@@ -99,26 +99,27 @@ f"""Please select a field and update it:
             print("Password set succesfully")
             time.sleep(0.75)
             cls.password = password_input
-    
-    @classmethod
-    def __handle_submit(cls):
-        # if "" not in [cls.username, cls.email, cls.password]:
-        if "" not in [cls.username, cls.password, cls.first_name, cls.last_name]:
-            add_Data_Service_obj = AddDataService()
-            added_user = add_Data_Service_obj.addUser(cls.username, cls.password, cls.first_name, cls.last_name)
-            if added_user != None:
-                Logger.log(cls.username, "Registered new account")
-                print("User registered succesfully and is now awaiting approval by an admin.")
-            else:
-                Logger.log(cls.username, "Registration failed", "User already exists", suspicious=True)
-                print("Error: user already exists")
-        else:
-            print("""Error: cannot submit because username and/or email and/or password has remained blank,'
-either because left unhandled or couldn't be updated due to an invalid input.""")
-        time.sleep(0.75)
+        return cls.password
+
+#     @classmethod
+#     def __handle_submit(cls):
+#         # if "" not in [cls.username, cls.email, cls.password]:
+#         if "" not in [cls.username, cls.password, cls.first_name, cls.last_name]:
+#             add_Data_Service_obj = AddDataService()
+#             added_user = add_Data_Service_obj.addUser(cls.username, cls.password, cls.first_name, cls.last_name)
+#             if added_user != None:
+#                 Logger.log(cls.username, "Registered new account")
+#                 print("User registered succesfully and is now awaiting approval by an admin.")
+#             else:
+#                 Logger.log(cls.username, "Registration failed", "User already exists", suspicious=True)
+#                 print("Error: user already exists")
+#         else:
+#             print("""Error: cannot submit because username and/or email and/or password has remained blank,'
+# either because left unhandled or couldn't be updated due to an invalid input.""")
+#         time.sleep(0.75)
 
     @classmethod
-    def __handle_first_name_submit(cls):
+    def handle_first_name_submit(cls):
         name_input = input("Please enter your first name: ")
         if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid first name")
@@ -127,9 +128,10 @@ either because left unhandled or couldn't be updated due to an invalid input."""
             print("First name set succesfully")
             time.sleep(0.75)
             cls.first_name = name_input
+        return cls.first_name
 
     @classmethod
-    def __handle_last_name_submit(cls):
+    def handle_last_name_submit(cls):
         name_input = input("Please enter your last name: ")
         if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid last name")
@@ -138,6 +140,7 @@ either because left unhandled or couldn't be updated due to an invalid input."""
             print("Last name set succesfully")
             time.sleep(0.75)
             cls.last_name = name_input
+        return cls.last_name
 
     @classmethod
     def __handle_input_length(cls, inp):
