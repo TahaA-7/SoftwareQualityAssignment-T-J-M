@@ -16,6 +16,11 @@ from getpass import getpass
 
 from presentation_layer.utils.Session import Session
 
+from presentation_layer.menus.CreateOrUpdateEmployee import CreateOrUpdateEmployee
+from presentation_layer.menus.CreateOrUpdateTraveller import CreateOrUpdateTraveller
+from presentation_layer.menus.CreateOrUpdateScooter import CreateOrUpdateScooter
+
+
 class SystemAdministratorInterface(ServiceEngineerInterface):
     get_data_methods = GetDataService()
     add_data_methods = AddDataService()
@@ -55,27 +60,46 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
 
             match choice:
                 # Service Engineer functionality
-                case '1': cls.update_own_password()
-                case '2': cls.update_scooter()
-                case '3': cls.__view_scooter()
+                case '1': 
+                    cls.update_own_password()
+                case '2': 
+                    cls.update_scooter()
+                case '3':
+                    cls.view_scooter()
 
                 # System Admin functionality
-                case '4': cls.check_users_and_roles()
-                case '5': cls.add_service_engineer()
-                case '6': cls.update_service_engineer()
-                case '7': cls.delete_service_engineer()
-                case '8': cls.reset_service_engineer_password()
-                case '9': cls.update_cls_account_profile()
-                case '10': cls.delete_cls_account()
-                case '11': cls.make_backend_backup()
-                case '12': cls.restore_backend_backup()
-                case '13': cls.view_log_single_or_multiple()
-                case '14': cls.add_traveller()
-                case '15': cls.update_traveller()
-                case '16': cls.delete_traveller()
-                case '17': cls.add_scooter()
-                case '18': cls.delete_scooter()
-                case '19': cls.view_traveller()
+                case '4': 
+                    cls.check_users_and_roles()
+                case '5': 
+                    cls.add_service_engineer()
+                case '6': 
+                    cls.update_service_engineer()
+                case '7': 
+                    cls.delete_service_engineer()
+                case '8': 
+                    cls.reset_service_engineer_password()
+                case '9': 
+                    cls.update_cls_account_profile()
+                case '10': 
+                    cls.delete_cls_account()
+                case '11': 
+                    cls.make_backend_backup()
+                case '12': 
+                    cls.restore_backend_backup()
+                case '13': 
+                    cls.view_log_single_or_multiple()
+                case '14': 
+                    cls.add_traveller()
+                case '15': 
+                    cls.update_traveller()
+                case '16': 
+                    cls.delete_traveller()
+                case '17': 
+                    cls.add_scooter()
+                case '18': 
+                    cls.delete_scooter()
+                case '19': 
+                    cls.view_traveller()
 
                 case '0':
                     print("Exiting System Administrator menu.")
@@ -92,22 +116,13 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
     # SERVICE ENGINEER
     @classmethod
     def add_service_engineer(cls):
-        cls.add_data_methods.addUser()
-
-    # CHECK ALL USERS
-    @classmethod
-    def check_users_and_roles(cls):
-        pass
-
-    # SERVICE ENGINEER
-    @classmethod
-    def add_service_engineer(cls):
-        pass
+        employee_menu = CreateOrUpdateEmployee()
+        employee_menu.menu()
 
     @classmethod
     def update_service_engineer(cls):
         # account and profile
-        cls.update_data_methods.update_ServiceEngineer()
+        cls.update_data_methods.update_service_engineer()
 
     @classmethod
     def delete_service_engineer(cls):
@@ -125,7 +140,7 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
             and one special character:
         """
         # Generate a valid temporary password
-        temp_password = cls.__generate_hashed_salted_password()
+        temp_password = cls.__generate_temp_password()
 
         hashed_salted_password = PasswordHasherSalter.hash_salt_password(temp_password)
         # salted_password = PasswordHasherSalter.salt_password(hashed_salted_password)
@@ -134,7 +149,7 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
         # return temp_password
 
     @classmethod
-    def __generate_hashed_salted_password(cls):
+    def __generate_temp_password(cls):
         specials = "~!@#$%&_-+=`|\\(){}[]:;'<>,.?/"
         temp_password = ""
         while True:
@@ -187,31 +202,47 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
 
     @classmethod
     def add_traveller(cls):
-        # traveller is not a user
-        cls.add_data_methods.addTraveller()
+        travellermenu_obj = CreateOrUpdateTraveller()
+        travellermenu_obj.menu()
 
     @classmethod
     def update_traveller(cls):
-        cls.update_data_methods.updateTraveller()
+        travellermenu_obj = CreateOrUpdateTraveller()
+        travellermenu_obj.menu()
 
     @classmethod
     def delete_traveller(cls):
-        cls.delete_data_methods.deleteTraveller()
+        customer_id = input("Enter Traveller customer ID (format=CUST00) to delete: ").strip()
+        cls.delete_data_methods.deleteTraveller(customer_id)
 
     # SCOOTER
     @classmethod
-    def add_scooter(cls):
-        cls.add_data_methods.addScooter()
+    def add_scooter(cls):              
+        scootermenu_obj = CreateOrUpdateScooter()
+        scootermenu_obj.menu()
 
     @classmethod
     def update_scooter(cls):
-        cls.update_data_methods.updateScooter()
+        scootermenu_obj = CreateOrUpdateScooter()
+        scootermenu_obj.menu()
 
     @classmethod
     def delete_scooter(cls):
-        cls.delete_data_methods.deleteScooter()
+        serial = input("Enter the scooter serial number to delete: ")
+        confirm = input(f"Delete scooter with serial '{serial}'? (y/n): ")
+        cls.delete_data_methods.deleteScooter(serial, confirm)
 
     # SERVICE ENGINEER METHODS
     @classmethod
-    def __view_scooter(cls):
-        ServiceEngineerInterface.__view_scooter()
+    def view_scooter(cls):
+        # search scooter info
+        '''
+        Note 2: The search function must accept reasonable data fields as a search key. It must also accept
+        partial keys. For example, a user can search for a Traveller with a name “Mike Thomson” and customer
+        ID “2123287421” by entering any of these keys: “mik”, “omso”, or “2328”, etc.
+        '''
+        getdataservice_obj = GetDataService()
+        user_input = input("Please enter a (part of a) brand or model name to search by: ")
+        scooters = getdataservice_obj.search_scooters(user_input)
+        for scooter in scooters:
+            print(scooter)

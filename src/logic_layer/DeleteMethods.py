@@ -43,25 +43,28 @@ class DeleteDataService:
 
         print("No System admin with that username.")
 
-    def deleteTraveller(self):
-        username = input("Enter Traveller username to delete: ").strip()
-
-        for user in self.user_.get_all_users():
-            if user[0].lower() == username.lower() and user[1].lower() == "traveller":
-                confirm = input(f"Are you sure you want to delete '{username}'? (y/n): ").lower()
+    def deleteTraveller(self, customer_id):
+        for traveller in self.traveller_.get_travellers():
+            if traveller[0].lower() == customer_id.lower():
+                confirm = input(f"Are you sure you want to delete '{customer_id}'? (y/n): ").lower()
                 if confirm == 'y':
-                    self.user_.delete_user(username)
-                    print(f"Traveller '{username}' deleted.")
+                    if self.user_.delete_user(customer_id.upper()):
+                        print(f"Traveller '{customer_id}' deleted.")
+                    print("No Traveller with that ID.")
                 else:
                     print("Deletion cancelled.")
                 return
 
-        print("No Traveller with that username.")
+    def deleteScooter(self, serial, confirm):
+        is_valid_flag = True
+        if not str(serial).strip().isdigit():
+            is_valid_flag = False
+            print("Invalid input: serial must be a whole number")
+        if not str(confirm).strip().upper() in ("Y", "N"):
+            print("Invalid input: confirmation must be either `Y or `N`")
+            is_valid_flag = False
 
-    def deleteScooter(self):
-        serial = input("Enter the scooter serial number to delete: ").strip()
-        confirm = input(f"Delete scooter with serial '{serial}'? (y/n): ").lower()
-        if confirm == 'y':
+        if is_valid_flag and confirm in ('y', 'Y'):
             self.scooter_.delete_scooter(serial)
             print("Scooter deleted.")
         else:

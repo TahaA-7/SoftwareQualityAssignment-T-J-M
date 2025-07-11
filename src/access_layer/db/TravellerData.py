@@ -4,6 +4,12 @@ class traveller_data:
     def __init__(self):
         self.db = DBContext()
 
+    def get_travellers(self):
+        with self.db.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""SELECT * FROM travellers""")
+            return cursor.fetchall()
+
     def search_traveller(self, keyword):
         with self.db.connect() as conn:
             cursor = conn.cursor()

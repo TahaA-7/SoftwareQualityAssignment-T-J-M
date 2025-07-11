@@ -87,7 +87,7 @@ f"""What do you want to do?:
                 "Please enter date of last maintenance in YYYY-MM-DD format or leave empty: "
                 )
 
-            scooter_updated = updatedataservice_obj.updateScooter_serviceEngineer(scooter_obj,
+            scooter_updated = updatedataservice_obj.updateScooterAttributes(scooter_obj,
                 state_of_charge_input, target_rage_SoC_input, location_input,
                   out_of_service_status_input, mileage_input, last_maintenance_date_input)
             return scooter_updated

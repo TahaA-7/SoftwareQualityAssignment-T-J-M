@@ -48,9 +48,13 @@ class user_data:
                 return False
 
     def delete_user(self, username):
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM users WHERE username = ?", (username.lower(),))
+        try:
+            with self.db.connect() as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM users WHERE username = ?", (username.lower(),))
+            return True
+        except Exception:
+            return False
 
     def update_user_profile(self, username, first_name, last_name):
         with self.db.connect() as conn:

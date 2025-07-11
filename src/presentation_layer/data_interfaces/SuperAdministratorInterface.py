@@ -25,7 +25,7 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
         while True:
             print("\n--- Super Administrator Menu ---")
 
-            print("[1] Update Scooter attributes")
+            print("[1] Update a Scooter")
             print("[2] Search and retrieve Scooter info")
 
             print("\n[3] View list of users and their roles")
@@ -56,32 +56,54 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
             match choice:
                 # Service Engineer–level
-                case '1': cls.update_scooter_attributes()
-                case '2': cls.view_scooter()
+                case '1': 
+                    cls.update_scooter()
+                case '2': 
+                    cls.view_scooter()
 
                 # System Admin–level
-                case '3': cls.check_users_and_roles()
-                case '4': cls.add_service_engineer()
-                case '5': cls.update_service_engineer()
-                case '6': cls.delete_service_engineer()
-                case '7': cls.reset_service_engineer_password()
-                case '8': cls.view_log_single_or_multiple()
-                case '9': cls.add_traveller()
-                case '10': cls.update_traveller()
-                case '11': cls.delete_traveller()
-                case '12': cls.add_scooter()
-                case '13': cls.update_scooter()
-                case '14': cls.delete_scooter()
-                case '15': cls.view_traveller()
+                case '3':
+                    cls.check_users_and_roles()
+                case '4': 
+                    cls.add_service_engineer()
+                case '5': 
+                    cls.update_service_engineer()
+                case '6': 
+                    cls.delete_service_engineer()
+                case '7': 
+                    cls.reset_service_engineer_password()
+                case '8': 
+                    cls.view_log_single_or_multiple()
+                case '9': 
+                    cls.add_traveller()
+                case '10': 
+                    cls.update_traveller()
+                case '11': 
+                    cls.delete_traveller()
+                case '12': 
+                    cls.add_scooter()
+                case '13': 
+                    cls.update_scooter()
+                case '14': 
+                    cls.delete_scooter()
+                case '15': 
+                    cls.view_traveller()
 
                 # Super Admin only
-                case '16': cls.add_system_administrator()
-                case '17': cls.update_system_administrator()
-                case '18': cls.delete_system_administrator()
-                case '19': cls.reset_system_administrator_password()
-                case '20': cls.generate_backup_key()
-                case '21': cls.share_backup_key()
-                case '22': cls.revoke_backup_key()
+                case '16': 
+                    cls.add_system_administrator()
+                case '17': 
+                    cls.update_system_administrator()
+                case '18': 
+                    cls.delete_system_administrator()
+                case '19': 
+                    cls.reset_system_administrator_password()
+                case '20': 
+                    cls.generate_backup_key()
+                case '21': 
+                    cls.share_backup_key()
+                case '22': 
+                    cls.revoke_backup_key()
 
                 case '0':
                     print("Exiting Super Administrator menu.")

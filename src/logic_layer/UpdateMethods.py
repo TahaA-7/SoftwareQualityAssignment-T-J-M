@@ -73,7 +73,7 @@ class UpdateDataService:
         lat, long = location.split('---') if location.count("---") == 1 else None
         out_of_service_status = out_of_service_status if out_of_service_status != "" else None
         mileage = mileage if mileage != "" else None
-        last_maintenance = last_maintenance if datetime.strptime(last_maintenance, "%Y-%m-%d") else None
+        last_maintenance = last_maintenance if datetime.strptime(last_maintenance, "%Y-%m-%d").date() else None
 
         updated_scooter = self.scooter_.update_scooter_attributes(scooter_obj, SoC, 
             target_SoC_min, target_SoC_max, lat, long, out_of_service_status, mileage, last_maintenance)
@@ -82,39 +82,9 @@ class UpdateDataService:
     def updateScooter(self):
         pass
 
-    def updateScooter_serviceEngineer(self, scooter_obj: Scooter, SoC, target_SoC, location, out_of_service_status, mileage, last_maintenance):
-        SoC = SoC if SoC != "" else None
 
-        if target_SoC != "" and target_SoC.count("---") == 1:
-            target_SoC_min, target_SoC_max = target_SoC.split("---")
-        else:
-            target_SoC_min = target_SoC_max = None
-
-        if location != "" and location.count("---") == 1:
-            lat, long = location.split('---')
-        else:
-            lat = long = None
-
-        out_of_service_status = out_of_service_status if out_of_service_status != "" else None
-        mileage = mileage if mileage != "" else None
-
-        try:
-            last_maintenance = last_maintenance if last_maintenance != "" else None
-            if last_maintenance:
-                last_maintenance = datetime.strptime(last_maintenance, "%Y-%m-%d").date()
-        except Exception:
-            print("Invalid date format. Ignoring maintenance date.")
-            last_maintenance = None
-
-        updated_scooter = self.scooter_.update_scooter_attributes(
-            scooter_obj, SoC,
-            target_SoC_min, target_SoC_max,
-            lat, long,
-            out_of_service_status,
-            mileage,
-            last_maintenance
-        )
-        return updated_scooter
+    def update_service_engineer(self):
+        pass
 
 
     def handle_input_length(self, inp: str):

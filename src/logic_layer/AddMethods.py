@@ -62,44 +62,55 @@ class AddDataService():
         self.user_.add_serviceEngineer(username, hashed_salted, first_name, last_name)
         print("User added successfully.")
 
-    def addScooter(self):
-        serial = input("Serial Number: ").strip()
-        brand = input("Brand: ").strip()
-        model = input("Model: ").strip()
-        top_speed = self.get_int("Top speed (km/h): ")
-        battery = self.get_int("Battery capacity (Wh): ")
-        soc = self.get_int("State of charge (%): ")
-        soc_min = self.get_int("Min SoC: ")
-        soc_max = self.get_int("Max SoC: ")
-        lat = self.get_float("Latitude: ")
-        lon = self.get_float("Longitude: ")
-        out_of_service = input("Is out of service (y/n): ").lower() == 'y'
-        mileage = self.get_float("Mileage (km): ")
-        last_maint = input("Last maintenance date (YYYY-MM-DD): ")
-        in_service_date = datetime.datetime()
+    def addScooter(self, serial, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon,
+                   out_of_service, mileage, last_maint, in_service_date=datetime.time()):
+    
+        is_valid_flag = True
 
-        scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
-        self.scooter_.add_scooter(scooter)
-        print("Scooter added successfully.")
+        if not str(top_speed).isdigit():
+            print("Invalid input: top_speed (km/h) must be a whole number")
+            is_valid_flag = False
+        if not str(battery).isdigit():
+            print("Invalid input: battery capacity (Wh) must be a whole number")
+            is_valid_flag = False
+        if not str(soc).isdigit():
+            print("Invalid input: (Soc) State of Charge (%) must be a whole number")
+            is_valid_flag = False
+        if not str(soc_min).isdigit():
+            print("Invalid input: minimum SoC must be a whole number")
+            is_valid_flag = False
+        if not str(soc_max).isdigit():
+            print("Invalid input: maximum SoC must be a whole number")
+            is_valid_flag = False
+        if not str(lat).isdecimal():
+            print("Invalid input: maximum SoC must be a decimal number")
+            is_valid_flag = False
+        if not str(lon).isdecimal():
+            print("Invalid input: longitude must be a decimal number")
+            is_valid_flag = False
+        if not str(out_of_service).upper() in ("Y", "N"):
+            print("Invalid input: out_of_service boolean must be either `Y` or `N`")
+            is_valid_flag = False
+        if not str(mileage).isdigit():
+            print("Invalid input: mileage (km/h) must be a whole number")
+            is_valid_flag = False
+        
+        if is_valid_flag:
+            soc_range = ";".join(soc_min, soc_max)
+            location = ";".join(lat, lon)
 
-    def addTraveller(self):
-        customer_id = str(uuid.uuid4())
-        first_name = input("First name: ").strip()
-        last_name = input("Last name: ").strip()
-        birthday = input("Birthday (YYYY-MM-DD): ")
-        gender = input("Gender (male/female): ")
-        street = input("Street name: ")
-        number = self.get_int("House number: ")
-        zip_code = input("Zip code (DDDDXX): ")
-        city = input("City (must be in list): ")
-        email = input("Email: ")
-        phone = input("Phone (8 digits): ")
-        license_number = input("Driving license (X/DDDDDDD): ")
-        registration_date = datetime.datetime()
+            scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
+            self.scooter_.add_scooter(scooter)
+            print("Scooter added successfully.")
+            return scooter
+        return None
 
-        traveller = Traveller(customer_id, first_name, last_name, birthday, gender,
-                            street, number, zip_code, city, email,
-                            phone, license_number, registration_date)
+    def addTraveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num, registration_date):
+        if customer_id == None: customer_id = str(uuid.uuid4())
+        if registration_date == None: registration_date = datetime.datetime()
+
+        traveller = Traveller(customer_id, fname, lname, bday, gender,
+                            street, house_num, zip, city, email,
+                            phone, license_num, registration_date)
 
         self.traveller_.add_traveller(traveller)
-        print("Traveller added successfully.")

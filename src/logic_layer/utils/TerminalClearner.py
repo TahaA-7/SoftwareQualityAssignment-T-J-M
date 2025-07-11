@@ -22,4 +22,5 @@ class TerminalCleaner:
 
     @classmethod
     def clear_terminal(cls):
+        pass
         os.system(cls.CLEAR)

@@ -5,7 +5,6 @@ from getpass import getpass
 import time
 from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.utils.Logger import Logger
-
 from logic_layer.utils.TerminalClearner import TerminalCleaner
 
 class RegisterMenu:

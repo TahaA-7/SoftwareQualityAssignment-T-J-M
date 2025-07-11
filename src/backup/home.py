@@ -6,7 +6,7 @@ def home_screen():
     # getpass hides the input
     getpass(f" -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -\nPress enter to continue ")
     while True:
-        clear_terminal()
+        # clear_terminal()
         print("""What do you want to do?
 [R] register
 [L] login

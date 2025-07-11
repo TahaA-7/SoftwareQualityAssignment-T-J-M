@@ -4,6 +4,22 @@ import string
 
 class StringValidations:
     @classmethod
+    def parse_int(prompt):
+        while True:
+            try:
+                return int(input(prompt))
+            except ValueError:
+                print("Invalid input. Please enter a whole number.")
+
+    @classmethod
+    def parse_float(prompt):
+        while True:
+            try:
+                return float(input(prompt))
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
+    @classmethod
     def is_valid_username(cls, username: str):
         if username == "super_admin":
             return True
@@ -91,7 +107,7 @@ class StringValidations:
             $ = end of string
             '''
 
-        return re.match(pattern, str_to_validate) is not None
+        return re.fullmatch(pattern, str_to_validate) is not None
 
     @classmethod
     def handle_input_length(cls, inp: str):
