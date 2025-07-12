@@ -2,6 +2,7 @@ from logic_layer.utils.TerminalClearner import TerminalCleaner
 from logic_layer.utils.StringValidations import StringValidations
 from logic_layer.AddMethods import AddDataService
 from logic_layer.UpdateMethods import UpdateDataService
+from logic_layer.GetDataMethods import GetDataService
 
 import re
 import string
@@ -14,9 +15,11 @@ from getpass import getpass
 
 class CreateOrUpdateMenu:
     alnum_dash = set(string.ascii_letters + string.digits + "-")
+    user_type = "service_engineer"
     # for service_engineer or system_admin account/profile
     user_id = ""
     username = password = u_fname = u_lname = ""
+    original_username_or_id = ""
     # for traveller
     customer_id = registration_date = ""
     c_fname = c_lname = bday = gender = street = house_number = zip = city = c_email = phone = ""
@@ -189,15 +192,23 @@ class CreateOrUpdateMenu:
         pass
 
     def _handle_update(self, type):
+        get_data_service_obj = GetDataService()
         update_data_service_obj = UpdateDataService()
         if type == "employee":
-            result = update_data_service_obj(self.username, self.password, self.u_fname, self.u_lname)
+            self.original_username_or_id = input(
+                "Please enter the original username or ID of the user to be updated: ")
+            fetched_user = get_data_service_obj.get_user_by_username_or_id(self.original_username_or_id)
+            if fetched_user != None:
+                # fetched_user[1] refers to the original username
+                result = update_data_service_obj.updateUser_profile(fetched_user[1], self.username, self.u_fname, self.u_lname)
+            else:
+                print("Error: no user found with that ID or username!")
         elif type == "traveller":
-            result = update_data_service_obj(self.c_fname, self.c_lname, self.bday, self.gender,
+            result = update_data_service_obj.updateTraveller(self.c_fname, self.c_lname, self.bday, self.gender,
                 self.street, self.house_number, self.zip, self.city, self.c_email, self.phone, 
                 self.license_number)
         elif type == "scooter":
-            result = update_data_service_obj(self.serial, self.brand, self.model, self.top_speed,
+            result = update_data_service_obj.updateScooter(self.serial, self.brand, self.model, self.top_speed,
                 self.battery, self.soc_min, self.soc_max, self.lat, self.lon, self.out_of_service_status,
                 self.mileage)
 
@@ -214,6 +225,7 @@ class CreateOrUpdateMenu:
     ○ must be started with a letter or underscores (_)
     ○ can contain letters (a-z), numbers (0-9), underscores (_), apostrophes ('), and periods (,)
     ○ no distinction between lowercase and uppercase letters (case-insensitive):\n""")
+        if username_input in ("", " "): return
         if StringValidations.is_valid_username(username_input) == False:
             print("Invalid username")
             time.sleep(0.75)
@@ -246,6 +258,7 @@ class CreateOrUpdateMenu:
 
     def _handle_first_name_submit(self, emp_or_cust):
         name_input = input("Please enter a first name: ")
+        if name_input in ("", " "): return
         if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid first name")
             time.sleep(0.75)
@@ -261,6 +274,7 @@ class CreateOrUpdateMenu:
 
     def _handle_last_name_submit(self, emp_or_cust):
         name_input = input("Please enter a last name: ")
+        if name_input in ("", " "): return 
         if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid last name")
             time.sleep(0.75)

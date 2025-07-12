@@ -8,6 +8,9 @@ from DataModels.ScooterModel import Scooter
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
+from presentation_layer.utils.Roles import Roles
+from presentation_layer.utils.Session import Session
+
 from datetime import datetime
 
 import hashlib
@@ -20,24 +23,27 @@ class UpdateDataService:
         self.log_ = log_data()
         self.user_data = user_data()
 
-    def updateUser_profile(self):
-        username = input("Username to update: ").strip()
-
+    def updateUser_profile(self, original_username, username, u_fname, u_lname):
         for user in self.user_.get_all_users():
-            if user[0].lower() == username.lower() and user[1].lower() == "service_engineer":
-                first_name = input("New first name: ").strip()
-                last_name = input("New last name: ").strip()
-                self.user_.update_user_profile(username, first_name, last_name)
-                print("User profile updated.")
-                return
+            if user[1].lower() == original_username.lower() and int(user[3]) == Roles.SERVICE_ENGINEER.value:
+                self.user_.update_user_profile(original_username, username, u_fname, u_lname)
+                return True
+            elif user[1].lower() == original_username.lower() and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
+                if Session.user.role == Roles.SUPER_ADMINISTRATOR:
+                    self.user_.update_user_profile(original_username, username, u_fname, u_lname)
+                    return True
+                else:
+                    print("Error: only super administrators can update system admin profile!")
+                    return False
 
         print("No Service engineer with that username.")
+        return False
 
     def update_SystemAdmin(self):
-        username = input("Username to update: ").strip()
+        username = input("Username or id from user to update: ").strip()
 
         for user in self.user_.get_all_users():
-            if user[0].lower() == username.lower() and user[1].lower() == "system_admin":
+            if user[1].lower() == username.lower() and user[3] == Roles(int(user[3])) or user[3] == Roles.SYSTEM_ADMINISTRATOR:
                 first_name = input("New first name: ").strip()
                 last_name = input("New last name: ").strip()
                 self.user_.update_user_profile(username, first_name, last_name)

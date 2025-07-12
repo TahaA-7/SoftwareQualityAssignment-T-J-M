@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import uuid
 from contextlib import contextmanager
 from datetime import datetime
 
@@ -12,6 +13,8 @@ class DBContext:
     def __init__(self, db_name='urban_mobility.db'):
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
         self.db_name = os.path.join(base_dir, db_name)
+
+        self._replace_old_users_table()
         self._create_tables()
 
     @contextmanager
@@ -25,6 +28,24 @@ class DBContext:
             raise e
         finally:
             conn.close()
+
+
+    def _replace_old_users_table(self):
+        with self.connect() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM old_users")
+            old_data = cursor.fetchall()
+
+            for row in old_data:
+                cursor.execute('''
+                    INSERT OR IGNORE INTO users (
+                        id, username, hashed_salted_password, role,
+                        first_name, last_name, registration_date, is_active
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    str(uuid.uuid4()),   # New UUID
+                    row[0], row[1], row[2], row[3], row[4], row[5], row[6]
+                ))
 
     def _create_tables(self):
         with self.connect() as conn:
@@ -122,6 +143,7 @@ class DBContext:
             # User table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
+                    id TEXT PRIMARY KEY,
                     username TEXT PRIMARY KEY,
                     hashed_salted_password TEXT,
                     role TEXT,
@@ -136,6 +158,7 @@ class DBContext:
             if cursor.fetchone() is None:
                 cursor.execute('''
                     INSERT INTO users (
+                        id,
                         username,
                         hashed_salted_password,
                         role,
@@ -143,8 +166,9 @@ class DBContext:
                         last_name,
                         registration_date,
                         is_active
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
+                    "2bf36451-ee7c-43f8-8573-c070dcbe18e5",
                     "DummyAcc1_",
                     initial_dummy_pass,
                     Roles.SERVICE_ENGINEER.value,
@@ -157,6 +181,7 @@ class DBContext:
             if cursor.fetchone() is None:
                 cursor.execute('''
                     INSERT INTO users (
+                        id,
                         username,
                         hashed_salted_password,
                         role,
@@ -164,8 +189,9 @@ class DBContext:
                         last_name,
                         registration_date,
                         is_active
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
+                    "caa2fc3b-7198-466b-b9d5-9b926da012c2",
                     "DummyAcc2_",
                     initial_dummy_pass,
                     Roles.SYSTEM_ADMINISTRATOR.value,

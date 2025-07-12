@@ -121,8 +121,8 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
 
     @classmethod
     def update_service_engineer(cls):
-        # account and profile
-        cls.update_data_methods.update_service_engineer()
+        employee_menu = CreateOrUpdateEmployee()
+        employee_menu.menu()
 
     @classmethod
     def delete_service_engineer(cls):

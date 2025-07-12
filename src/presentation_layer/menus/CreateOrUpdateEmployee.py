@@ -22,7 +22,7 @@ class CreateOrUpdateEmployee(CreateOrUpdateMenu):
         while True:
             print([f for f in self._get_employee_fields_dict().items()])
             user_choice = self._handle_input_length(getpass(
-f"""Please select a field and set it to a (new) value
+f"""Please select a field and set it to a (new) value or leave blank to keep old value (in case of update)
 
 [A] employee username {"✓" if self._get_employee_fields_dict()["username"] not in [None, ""] else ""}
 [B] employee password {"✓" if self._get_employee_fields_dict()["password"] not in [None, ""] else ""}
@@ -59,7 +59,8 @@ f"""Please select a field and set it to a (new) value
         self.user_id = str(uuid.uuid4())
         if "" not in self._get_employee_fields_dict().items():
             add_data_service_obj = AddDataService()
-            added_user = add_data_service_obj.addUser(self.username, self.password, self.u_fname, self.u_lname)
+            added_user = add_data_service_obj.addUser(
+                self.username, self.password, self.u_fname, self.u_lname, self.user_type)
             if added_user != None:
                 Logger.log(self.username, "Registered new account")
                 print("User registered succesfully.")

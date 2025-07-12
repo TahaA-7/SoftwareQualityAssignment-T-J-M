@@ -34,7 +34,7 @@ class AddDataService():
             except ValueError:
                 print("Invalid input. Please enter a number.")
 
-    def addUser(self, username, password, first_name, last_name):
+    def addUser(self, username, password, first_name, last_name, user_type="service_engineer"):
         hashed_salted = PasswordHasherSalter.hash_salt_password(password)
         added_user = self.user_.add_user(username, hashed_salted, first_name, last_name)
         print("User added successfully.") if added_user else "Oops, user couldn't be registered"
