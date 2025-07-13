@@ -14,8 +14,8 @@ class DBContext:
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
         self.db_name = os.path.join(base_dir, db_name)
 
-        self._replace_old_users_table()
         self._create_tables()
+        self._replace_old_users_table()
 
     @contextmanager
     def connect(self):
@@ -31,21 +31,22 @@ class DBContext:
 
 
     def _replace_old_users_table(self):
-        with self.connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM old_users")
-            old_data = cursor.fetchall()
+        # with self.connect() as conn:
+        #     cursor = conn.cursor()
+        #     cursor.execute("SELECT * FROM old_users1")
+        #     old_data = cursor.fetchall()
 
-            for row in old_data:
-                cursor.execute('''
-                    INSERT OR IGNORE INTO users (
-                        id, username, hashed_salted_password, role,
-                        first_name, last_name, registration_date, is_active
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
-                    str(uuid.uuid4()),   # New UUID
-                    row[0], row[1], row[2], row[3], row[4], row[5], row[6]
-                ))
+        #     for row in old_data:
+        #         cursor.execute('''
+        #             INSERT OR IGNORE INTO users (
+        #                 id, username, hashed_salted_password, role,
+        #                 first_name, last_name, registration_date, is_active
+        #             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        #         ''', (
+        #             str(uuid.uuid4()),   # New UUID
+        #             row[0], row[1], row[2], row[3], row[4], row[5], row[6]
+        #         ))
+        pass
 
     def _create_tables(self):
         with self.connect() as conn:
@@ -55,10 +56,10 @@ class DBContext:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS travellers (
                     customer_id TEXT PRIMARY KEY,
-                    registration_date TEXT,
+                    registration_date DATE,
                     first_name VARCHAR(50),
                     last_name VARCHAR(50),
-                    birthday TEXT,
+                    birthday DATE,
                     gender VARCHAR(10),
                     street_name VARCHAR(100),
                     house_number INTEGER,
@@ -144,12 +145,12 @@ class DBContext:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS users (
                     id TEXT PRIMARY KEY,
-                    username TEXT PRIMARY KEY,
+                    username TEXT,
                     hashed_salted_password VARCHAR(128),
                     role VARCHAR(30),
                     first_name VARCHAR(50),
                     last_name VARCHAR(50),
-                    registration_date TEXT,
+                    registration_date DATE,
                     is_active BOOL
                 )
             ''')
@@ -157,7 +158,7 @@ class DBContext:
             cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc1_",))
             if cursor.fetchone() is None:
                 cursor.execute('''
-                    INSERT INTO users (
+                    INSERT OR IGNORE INTO users (
                         id,
                         username,
                         hashed_salted_password,
@@ -180,7 +181,7 @@ class DBContext:
             cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc2_",))
             if cursor.fetchone() is None:
                 cursor.execute('''
-                    INSERT INTO users (
+                    INSERT OR IGNORE INTO users (
                         id,
                         username,
                         hashed_salted_password,
@@ -203,7 +204,7 @@ class DBContext:
             cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc222_",))
             if cursor.fetchone() is None:
                 cursor.execute('''
-                    INSERT INTO users (
+                    INSERT OR IGNORE INTO users (
                         id,
                         username,
                         hashed_salted_password,

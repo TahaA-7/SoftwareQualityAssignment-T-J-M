@@ -33,7 +33,7 @@ class traveller_data:
                     customer_id, registration_date, first_name, last_name,
                     birthday, gender, street_name, house_number,
                     zip_code, city, email, mobile_phone, driving_license_number
-                ) VALUES (?, datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
                 traveller.customer_id, traveller.registration_date, traveller.first_name, traveller.last_name,
                 traveller.birthday, traveller.gender, traveller.street_name,

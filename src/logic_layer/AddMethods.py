@@ -69,11 +69,25 @@ class AddDataService():
         pass
 
     def addScooter(self, serial, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon,
-                   out_of_service, mileage, last_maint, in_service_date=datetime.time()):
+                   out_of_service, mileage, last_maint, in_service_date=None):
     
-        if any(not field.strip() for field in [serial, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon,
-                    out_of_service, mileage, last_maint]):
+        if out_of_service in (None, "", " "):
+            out_of_service = False
+
+        # Validate all required string fields
+        string_fields = [serial, brand, model]
+        if any(not isinstance(field, str) or not field.strip() for field in string_fields):
+            print("Invalid string field")
             return None
+
+        # Validate required numeric/boolean fields
+        numeric_fields = [top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage]
+        if any(field is None for field in numeric_fields):
+            print("Invalid numeric field")
+            return None
+
+        if in_service_date is None:
+            in_service_date = datetime.date.today()
 
         is_valid_flag = True
 
@@ -107,13 +121,13 @@ class AddDataService():
         
         if is_valid_flag:
             soc_range = ";".join((soc_min, soc_max))
-            location = ";".join(lat, lon)
+            # location = ";".join((str(lat), str(lon)))
 
-            scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
+            scooter = Scooter(serial, model, brand, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
             return self.scooter_.add_scooter(scooter)
         return None
 
-    def addTraveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num, registration_date):
+    def addTraveller(self, customer_id, registration_date, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num):
         if any(not str(field).strip() for field in [fname, lname, gender, street, house_num, zip, city, email, phone, license_num]):
             return None
         # if not isinstance(bday, datetime.date):
@@ -121,8 +135,8 @@ class AddDataService():
         if customer_id == None: customer_id = str(uuid.uuid4())
         if registration_date == None: registration_date = datetime.date.today()
 
-        traveller = Traveller(customer_id, fname, lname, bday, gender,
+        traveller = Traveller(customer_id, registration_date, fname, lname, bday, gender,
                             street, house_num, zip, city, email,
-                            phone, registration_date, license_num)
+                            phone, license_num)
 
         return self.traveller_.add_traveller(traveller)

@@ -5,10 +5,13 @@ class Scooter:
     def __init__(self, serial_number, brand, model, top_speed,
                  battery_capacity, state_of_charge, target_soc_min,
                  target_soc_max, latitude, longitude, out_of_service,
-                 mileage, last_maintenance_date):
+                 mileage, last_maintenance_date, in_service_date):
         
         self.serial_number = serial_number
-        self.in_service_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        if in_service_date == None:
+            self.in_service_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            self.in_service_date = in_service_date
 
         self.brand = brand
         self.model = model

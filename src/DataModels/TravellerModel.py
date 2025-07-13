@@ -3,9 +3,9 @@ from datetime import datetime
 
 
 class Traveller:
-    def __init__(self, customer_id, first_name, last_name, birthday, gender,
+    def __init__(self, customer_id, registration_date, first_name, last_name, birthday, gender,
                  street_name, house_number, zip_code, city,
-                 email, mobile_phone, registration_date, driving_license_number):
+                 email, mobile_phone, driving_license_number):
         if customer_id in (None, "", " "): 
             self.customer_id = str(uuid.uuid4())
         else:
@@ -14,7 +14,6 @@ class Traveller:
             self.registration_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         else:
             self.registration_date = registration_date
-
         self.first_name = first_name
         self.last_name = last_name
         self.birthday = birthday
