@@ -16,6 +16,7 @@ from getpass import getpass
 
 
 class CreateOrUpdateEmployee(CreateOrUpdateMenu):
+    user_type = "employee"
     def menu(self):
         print("""Welcome
 -   -   -   -   -   -   -""")
@@ -72,4 +73,4 @@ f"""Please select a field and set it to a (new) value or leave blank to keep old
 either because left unhandled or couldn't be updated due to an invalid input.""")
 
     def _handle_update(self):
-        return super()._handle_update("employee")
+        return super()._handle_update(self.user_type)

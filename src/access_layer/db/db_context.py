@@ -215,7 +215,7 @@ class DBContext:
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
                     "ead64393-6e8b-48df-be72-3fd1e2a7844e",
-                    "DummyAcc222_",
+                    "dummyacc222_",
                     initial_dummy_pass,
                     Roles.SYSTEM_ADMINISTRATOR.value,
                     "Dummy",

@@ -131,7 +131,9 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
     @classmethod
     def update_system_administrator(cls):
-        cls.update_data_methods.update_SystemAdmin()
+        employee_menu = CreateOrUpdateEmployee()
+        # employee_menu.object_type = "employee"  # system_administrator
+        employee_menu.menu()
 
     @classmethod
     def delete_system_administrator(cls):

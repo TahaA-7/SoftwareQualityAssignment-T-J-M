@@ -36,6 +36,8 @@ class AddDataService():
                 print("Invalid input. Please enter a number.")
 
     def addUser(self, username, password, first_name, last_name, user_type=Roles.SERVICE_ENGINEER.value):
+        if any(not field.strip() for field in [username, password, first_name, last_name]):
+            return None
         id = str(uuid.uuid4())
         hashed_salted = PasswordHasherSalter.hash_salt_password(password)
         added_user = self.user_.add_user(id, username, hashed_salted, first_name, last_name, user_type)
@@ -69,6 +71,10 @@ class AddDataService():
     def addScooter(self, serial, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon,
                    out_of_service, mileage, last_maint, in_service_date=datetime.time()):
     
+        if any(not field.strip() for field in [serial, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon,
+                    out_of_service, mileage, last_maint]):
+            return None
+
         is_valid_flag = True
 
         # if not str(top_speed).isdigit():
@@ -100,21 +106,23 @@ class AddDataService():
         #     is_valid_flag = False
         
         if is_valid_flag:
-            soc_range = ";".join(soc_min, soc_max)
+            soc_range = ";".join((soc_min, soc_max))
             location = ";".join(lat, lon)
 
             scooter = Scooter(brand, model, serial, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
-            self.scooter_.add_scooter(scooter)
-            print("Scooter added successfully.")
-            return scooter
+            return self.scooter_.add_scooter(scooter)
         return None
 
     def addTraveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num, registration_date):
+        if any(not str(field).strip() for field in [fname, lname, gender, street, house_num, zip, city, email, phone, license_num]):
+            return None
+        # if not isinstance(bday, datetime.date):
+        #     return None
         if customer_id == None: customer_id = str(uuid.uuid4())
-        if registration_date == None: registration_date = datetime.datetime()
+        if registration_date == None: registration_date = datetime.date.today()
 
         traveller = Traveller(customer_id, fname, lname, bday, gender,
                             street, house_num, zip, city, email,
-                            phone, license_num, registration_date)
+                            phone, registration_date, license_num)
 
-        self.traveller_.add_traveller(traveller)
+        return self.traveller_.add_traveller(traveller)

@@ -9,14 +9,14 @@ class scooter_data:
 
     # def get_scooters()
 
-    def get_scooter_single(self, brand, model):
+    def get_scooter_single(self, original_serial):
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''
-                SELECT serial_number, brand, model, top_speed, state_of_charge, mileage
+                SELECT *
                 FROM scooters
-                WHERE brand = ? AND model = ?
-            ''', (brand, model))
+                WHERE serial_number = ?
+            ''', (original_serial,))
             return cursor.fetchall()
 
     def search_scooter(self, keyword):
@@ -49,6 +49,7 @@ class scooter_data:
                 int(scooter.out_of_service), scooter.mileage,
                 scooter.last_maintenance_date
             ))
+            return cursor.rowcount > 0
 
     def delete_scooter(self, serial_number):
         with self.db.connect() as conn:
@@ -60,14 +61,16 @@ class scooter_data:
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
-                cursor.execute("SELECT * FROM scooters WHERE serial_number = ?", (original_serial,))
+                cursor.execute("""SELECT serial_number, in_service_date, brand, model, top_speed, battery_capacity, state_of_charge,
+                                    target_soc_min, target_soc_max, latitude, longitude, out_of_service, mileage, last_maintenance_date
+                                FROM scooters WHERE serial_number = ?""", (original_serial,))
                 row = cursor.fetchone()
                 if not row:
                     print("Scooter not found")
                     return False
                 # curr as in current
-                curr_serial, curr_brand, curr_model, curr_top_speed, curr_battery, curr_soc, curr_soc_range, curr_soc_min, curr_soc_max, = row
-                curr_lat, curr_lon, curr_out_of_service_status, curr_mileage, curr_last_maint_date = row
+                (curr_serial, curr_in_service_date, curr_brand, curr_model, curr_top_speed, curr_battery, curr_soc, curr_soc_min, 
+                 curr_soc_max, curr_lat, curr_lon, curr_out_of_service_status, curr_mileage, curr_last_maint_date) = row
                 # Use current value if input is blank
                 serial = serial if serial != "" else curr_serial
                 brand = brand if brand != "" else curr_brand
@@ -75,7 +78,7 @@ class scooter_data:
                 top_speed = top_speed if top_speed != "" else curr_top_speed
                 battery = battery if battery != "" else curr_battery
                 soc = soc if soc != "" else curr_soc
-                soc_range = soc_range if soc_range != "" else curr_soc_range
+                # soc_range = soc_range if soc_range != "" else curr_soc_range
                 soc_min = soc_min if soc_min != "" else curr_soc_min
                 soc_max = soc_max if soc_max != "" else curr_soc_max
                 lat = lat if lat != "" else curr_lat
@@ -84,13 +87,15 @@ class scooter_data:
                 mileage = mileage if mileage != "" else curr_mileage
                 last_maint_date = last_maint_date if last_maint_date != "" else curr_last_maint_date
                 cursor.execute("""UPDATE scooters
-                            SET serial = ?, brand = ?, model = ?, top_speed = ?, battery_capacity = ?, state_of_charge = ?, soc_range = ?, soc_min = ?, soc_max = ?,
-                                lat = ?, lon = ?, out_of_service_status = ?, mileage = ?, last_maint_date = ?
-                            WHERE serial = ?
-                            """, (serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max,
-                        lat, lon, out_of_service_status, mileage, last_maint_date, original_serial))
+                    SET serial_number = ?, brand = ?, model = ?, top_speed = ?, battery_capacity = ?, state_of_charge = ?, target_soc_min = ?, 
+                        target_soc_max = ?, latitude = ?, longitude = ?, out_of_service = ?, mileage = ?, last_maintenance_date = ?
+                    WHERE serial_number = ?
+                """, (serial, brand, model, top_speed, battery, soc, soc_min, soc_max,
+                    lat, lon, out_of_service_status, mileage, last_maint_date, original_serial))
+
                 return cursor.rowcount > 0
-        except Exception:
+        except Exception as ex:
+            print(ex)
             return False
     
     def update_scooter_attributes(

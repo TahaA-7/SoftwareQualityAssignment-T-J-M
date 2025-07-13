@@ -35,18 +35,19 @@ class traveller_data:
                     zip_code, city, email, mobile_phone, driving_license_number
                 ) VALUES (?, datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (
-                traveller.customer_id, traveller.first_name, traveller.last_name,
+                traveller.customer_id, traveller.registration_date, traveller.first_name, traveller.last_name,
                 traveller.birthday, traveller.gender, traveller.street_name,
                 traveller.house_number, traveller.zip_code, traveller.city,
                 traveller.email, traveller.mobile_phone, traveller.driving_license_number
             ))
+            return cursor.rowcount > 0
 
     def delete_traveller(self, customer_id):
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM travellers WHERE customer_id = ?", (customer_id,))
 
-    def update_traveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone):
+    def update_traveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num):
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
@@ -56,8 +57,9 @@ class traveller_data:
                     print("Traveller not found")
                     return False
                 # curr as in current
-                curr_fname = curr_fname = curr_lname = curr_bday = curr_gender = curr_street = curr_house_num = curr_zip = curr_city = row
-                curr_email = curr_phone = row
+                (curr_id, curr_registration_date, curr_fname, curr_lname, curr_bday, curr_gender,
+                curr_street, curr_house_num, curr_zip, curr_city,
+                curr_email, curr_phone, curr_license_num) = row
                 # Use current value if input is blank
                 fname = fname if fname != "" else curr_fname
                 lname = lname if lname != "" else curr_lname
@@ -69,12 +71,13 @@ class traveller_data:
                 city = city if city != "" else curr_city
                 email = email if email != "" else curr_email
                 phone = phone if phone != "" else curr_phone
+                license_num = license_num if license_num != "" else curr_license_num
 
                 cursor.execute("""UPDATE travellers
-                                SET first_name = ?, last_name = ?, birthday = ?, gender = ?, street = ?, house_number = ?, zip_code = ?,
-                                    city = ?, email = ?, mobile_phone = ?
+                                SET first_name = ?, last_name = ?, birthday = ?, gender = ?, street_name = ?, house_number = ?, zip_code = ?,
+                                    city = ?, email = ?, mobile_phone = ?, driving_license_number = ?
                                 WHERE customer_id = ?
-                """, (fname, lname, bday, gender, street, house_num, zip, city, email, phone, customer_id))
+                """, (fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num, customer_id))
 
                 return cursor.rowcount > 0
         except Exception:

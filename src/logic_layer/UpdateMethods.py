@@ -58,7 +58,7 @@ class UpdateDataService:
         updated_user = self.user_.update_user_password(username_or_id, hashed_salted)
         return updated_user != None
 
-    def updateTraveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone):
+    def updateTraveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num):
         # customer_id = input("Traveller ID: ").strip()
         # field = input("Which field to update (first_name, email, city, etc.): ").strip()
         # new_value = input("New value: ").strip()
@@ -74,7 +74,7 @@ class UpdateDataService:
         # print("Traveller updated.")
         for traveller in self.traveller_.get_travellers():
             if traveller[0] == customer_id:
-                res = self.traveller_.update_traveller(customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone)
+                res = self.traveller_.update_traveller(customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num)
                 return res
         return False
  
@@ -92,7 +92,7 @@ class UpdateDataService:
 
     def updateScooter(self, original_serial, serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max, lat, lon, 
             out_of_service_status, mileage, last_maint_date):
-        for scooter in self.scooter_.get_scooter_single():
+        for scooter in self.scooter_.get_scooter_single(original_serial):
             if scooter[0] == original_serial:
                 res = self.scooter_.update_scooter(original_serial, serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max,
                     lat, lon, out_of_service_status, mileage, last_maint_date)

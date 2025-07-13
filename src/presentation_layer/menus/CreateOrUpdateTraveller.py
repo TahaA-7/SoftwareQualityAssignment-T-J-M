@@ -80,14 +80,14 @@ f"""Please select a field and set it to a (new) value
 
     def _handle_register(self):
         self.customer_id = str(uuid.uuid4())
-        self.registration_date = datetime.datetime()
+        self.registration_date = datetime.date.today()
         self.license_number = self._generate_license_number()
         if "" not in self._get_traveller_fields_dict().items():
             add_data_service_obj = AddDataService()
             added_traveller = add_data_service_obj.addTraveller(self.customer_id, self.registration_date, 
                 self.c_fname, self.c_lname, self.bday, self.gender, self.street, self.house_number,
                 self.zip, self.city, self.c_email, self.phone, self.license_number)
-            if added_traveller != None:
+            if added_traveller:
                 Logger.log(self.customer_id, "Registered new traveller")
                 print("Traveller registered succesfully.")
             else:

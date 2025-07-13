@@ -16,6 +16,7 @@ from getpass import getpass
 
 class CreateOrUpdateMenu:
     alnum_dash = set(string.ascii_letters + string.digits + "-")
+    object_type = ""
     user_type = 1  # service_engineer
     # for service_engineer or system_admin account/profile
     user_id = ""
@@ -196,11 +197,12 @@ class CreateOrUpdateMenu:
     def _handle_update(self, type):
         get_data_service_obj = GetDataService()
         update_data_service_obj = UpdateDataService()
+        result = False
         if type == "employee":
             self.original_username_or_id = input(
                 "Please enter the original username or ID of the user to be updated: ")
             fetched_user = get_data_service_obj.get_user_by_username_or_id(self.original_username_or_id)
-            if fetched_user != None:
+            if fetched_user:
                 # fetched_user[1] refers to the original username
                 result = update_data_service_obj.updateUser_profile(fetched_user[1], self.username, self.u_fname, self.u_lname)
             else:
@@ -213,12 +215,14 @@ class CreateOrUpdateMenu:
         elif type == "scooter":
             self.original_serial = input("Please enter the original serial number of the scooter to be updated: ")
             result = update_data_service_obj.updateScooter(self.original_serial, self.serial, self.brand, self.model, self.top_speed,
-                self.battery, self.soc_min, self.soc_max, self.lat, self.lon, self.out_of_service_status,
-                self.mileage)
+                self.battery, self.soc, self.soc_range, self.soc_min, self.soc_max, self.lat, self.lon, self.out_of_service_status,
+                self.mileage, last_maint_date=datetime.date.today())
 
-        if result != None:
-            return True
-        return False
+        if result:
+            print('added sucessfully')
+        else:
+            print('error: update failed')
+        return result
 
 
     # USERS MAINLY
@@ -262,7 +266,8 @@ class CreateOrUpdateMenu:
 
     def _handle_first_name_submit(self, emp_or_cust):
         name_input = input("Please enter a first name: ")
-        if name_input in ("", " "): return
+        if name_input in ("", " "):
+            return
         if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid first name")
             time.sleep(0.75)
@@ -272,13 +277,14 @@ class CreateOrUpdateMenu:
             if emp_or_cust == "emp":
                 self.u_fname = name_input
             else:
-                self.c_fname
+                self.c_fname = name_input
         return self.u_fname if emp_or_cust == "emp" else self.c_fname
 
 
     def _handle_last_name_submit(self, emp_or_cust):
         name_input = input("Please enter a last name: ")
-        if name_input in ("", " "): return 
+        if name_input in ("", " "):
+            return
         if StringValidations.is_valid_first_or_last_name(name_input) == False:
             print("Invalid last name")
             time.sleep(0.75)
@@ -288,7 +294,7 @@ class CreateOrUpdateMenu:
             if emp_or_cust == "emp":
                 self.u_lname = name_input
             else:
-                self.c_lname
+                self.c_lname = name_input
         return self.u_lname if emp_or_cust == "emp" else self.c_lname
 
 
@@ -357,9 +363,9 @@ class CreateOrUpdateMenu:
         try:
             soc_range = input("Min SoC - Max SoC, split with `-` (10-20): ").strip()
             # self.soc_range = soc_range.replace(";", "") if soc_range.count(";") == 1 and soc_range.replace(";", "").isdigit()
-            if soc_range.count(";") == 1:
+            if soc_range.count("-") == 1:
                 soc_min, soc_max = soc_range.split("-")
-                if soc_min.isdigit() and soc_max.isdigit():
+                if soc_min.isnumeric() and soc_max.isnumeric():
                     self.soc_min = soc_min
                     self.soc_max = soc_max
         except Exception:
@@ -369,10 +375,11 @@ class CreateOrUpdateMenu:
             location = input("Min SoC - Max SoC, split with `;` (52.3676;4.9041): ").strip().replace(",", ".")
             # self.location = location.replace(";", "") if location.count(";") == 1 and re.fullmatch(r'\d+(\.\d+)?', location.replace(";", ""))
             if location.count(";") == 1:
-                lat, lon = location.split(";")
-                if lat.replace(".", ",").isdecimal() and lon.replace(".", ",").isdecimal():
-                    self.soc_min = lat
-                    self.soc_max = lon
+                lat_str, lon_str = location.split(";")
+                lat = float(lat_str.strip())
+                lon = float(lon_str.strip())
+                self.lat = lat
+                self.lon = lon
         except Exception:
             print("Invalid input. Format should be: `52.3676;4.9041`")
     def _handle_scooter_out_of_service_status(self):
@@ -380,7 +387,7 @@ class CreateOrUpdateMenu:
         self.out_of_service_status = out_of_service if out_of_service not in ('n', 'N', '') else ""
     def _handle_scooter_mileage(self):
         mileage = input("Mileage (km): ").strip()
-        self.mileage = mileage if mileage.isdigit() else ""
+        self.mileage = mileage if mileage.replace(".", "").isnumeric() else ""
 
 
     def _select_city(self):

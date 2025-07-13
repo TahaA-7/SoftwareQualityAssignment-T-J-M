@@ -81,12 +81,12 @@ f"""Please select a field and set it to a (new) value
             added_scooter = add_data_service_obj.addScooter(self.serial, self.brand, self.model, 
                 self.top_speed, self.battery, self.soc, self.soc_range, self.soc_min, self.soc_max,
                 self.lat, self.lon, self.out_of_service_status, self.mileage, self.last_maint_date)
-            if added_scooter != None:
+            if added_scooter:
                 Logger.log(self.customer_id, "Registered new scooter")
                 print("Scooter registered succesfully.")
             else:
                 Logger.log(self.username, "Registration failed", "Scooter already exists", suspicious=True)
-                print("Error: traveller already exists")
+                print("Error: scooter already exists")
         else:
             print("Error: cannot submit because one or more fields remained blank " + 
 "either because left unhandled or couldn't be updated due to an invalid input.")

@@ -3,11 +3,17 @@ from datetime import datetime
 
 
 class Traveller:
-    def __init__(self, first_name, last_name, birthday, gender,
+    def __init__(self, customer_id, first_name, last_name, birthday, gender,
                  street_name, house_number, zip_code, city,
-                 email, mobile_phone, driving_license_number):
-        self.customer_id = str(uuid.uuid4())
-        self.registration_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                 email, mobile_phone, registration_date, driving_license_number):
+        if customer_id in (None, "", " "): 
+            self.customer_id = str(uuid.uuid4())
+        else:
+            self.customer_id = customer_id
+        if registration_date in (None, "", " "):
+            self.registration_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            self.registration_date = registration_date
 
         self.first_name = first_name
         self.last_name = last_name

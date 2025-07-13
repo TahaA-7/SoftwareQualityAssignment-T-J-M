@@ -7,7 +7,7 @@ class Scooter:
                  target_soc_max, latitude, longitude, out_of_service,
                  mileage, last_maintenance_date):
         
-        serial_number = serial_number
+        self.serial_number = serial_number
         self.in_service_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         self.brand = brand

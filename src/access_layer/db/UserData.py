@@ -15,7 +15,7 @@ class user_data:
                 cursor.execute("""SELECT id, username, hashed_salted_password, role, first_name, last_name, 
                     is_active FROM users WHERE id = ?""", (username_or_id,))
                 fetched = cursor.fetchone()
-                if fetched is not None:
+                if fetched:
                     return fetched
                 cursor.execute("""SELECT id, username, hashed_salted_password, role, first_name, last_name, 
                     is_active FROM users WHERE username = ?""", (username_or_id.lower(),))
@@ -40,7 +40,7 @@ class user_data:
                 cursor.execute('''
                     INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
                     VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                ''', (id, username.lower(), hashed_salted_password, user_type, first_name, last_name, False))
+                ''', (id, username.lower(), hashed_salted_password, user_type, first_name, last_name, True))
                 return True
             except Exception:
                 return False
