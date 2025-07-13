@@ -1,6 +1,10 @@
 from logic_layer.BackupService import BackupService
 from access_layer.db.UserData import user_data
 
+from enum import Enum
+from presentation_layer.utils.Roles import Roles
+
+
 class BackupMethods:
     def __init__(self):
         self.backup_service = BackupService()
@@ -13,7 +17,7 @@ class BackupMethods:
         username = input("Enter System Admin username: ").strip()
         
         for user in self.user_data.get_all_users():
-            if user[0].lower() == username.lower() and user[1].lower() == "system_admin":
+            if user[1].lower() == username.lower() and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
                 backup_filename = self.backup_service.create_backup()
                 self.backup_service.generate_restore_code(backup_filename, username)
                 return
