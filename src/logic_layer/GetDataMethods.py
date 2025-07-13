@@ -10,7 +10,7 @@ from DataModels.ScooterModel import Scooter
 import json
 import os
 
-user_keys_tuple = ('username', 'password', 'role', 'first_name', 'last_name', 'is_active')
+user_keys_tuple = ('id', 'username', 'password', 'role', 'first_name', 'last_name', 'registration_date', 'is_active')
 
 class GetDataService:
     def __init__(self):

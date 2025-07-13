@@ -5,6 +5,8 @@ from access_layer.db.LogData import log_data
 
 from access_layer.db.UserData import user_data
 
+from presentation_layer.utils.Roles import Roles
+
 class DeleteDataService:
     def __init__(self):
         self.user_ = user_data()
@@ -13,33 +15,45 @@ class DeleteDataService:
         self.log_ = log_data()
         self.user_data = user_data()
 
-    def deleteServiceEngineer(self):
-        username = input("Enter Service Engineer username to delete: ").strip()
-
+    def deleteServiceEngineer(self, username_or_id):
         for user in self.user_.get_all_users():
-            if user[0].lower() == username.lower() and user[1].lower() == "service_engineer":
-                confirm = input(f"Are you sure you want to delete '{username}'? (y/n): ").lower()
+            if user[0] == username_or_id and int(user[3]) == Roles.SERVICE_ENGINEER.value:
+                confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
                 if confirm == 'y':
-                    self.user_.delete_user(username)
-                    print(f"Service Engineer '{username}' deleted.")
+                    self.user_.delete_user(username_or_id)
+                    print(f"Service Engineer '{user[1]}' deleted.")
+                else:
+                    print("Deletion cancelled.")
+                return
+            elif user[1].lower() == username_or_id and int(user[3]) == Roles.SERVICE_ENGINEER.value:
+                confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
+                if confirm == 'y':
+                    self.user_.delete_user(username_or_id)
+                    print(f"System admin '{user[1]}' deleted.")
                 else:
                     print("Deletion cancelled.")
                 return
 
         print("No Service Engineer with that username.")
 
-    def deleteSystemAdmin(self):
-        username = input("Enter System admin username to delete: ").strip()
-
+    def deleteSystemAdmin(self, username_or_id):
         for user in self.user_.get_all_users():
-            if user[0].lower() == username.lower() and user[1].lower() == "system_admin":
-                confirm = input(f"Are you sure you want to delete '{username}'? (y/n): ").lower()
+            if user[0] == username_or_id and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
+                confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
                 if confirm == 'y':
-                    self.user_.delete_user(username)
-                    print(f"System admin '{username}' deleted.")
+                    self.user_.delete_user(username_or_id)
+                    print(f"System admin '{user[1]}' deleted.")
                 else:
                     print("Deletion cancelled.")
                 return
+            elif user[1].lower() == username_or_id and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
+                confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
+                if confirm == 'y':
+                    self.user_.delete_user(username_or_id)
+                    print(f"System admin '{user[1]}' deleted.")
+                else:
+                    print("Deletion cancelled.")
+                return 
 
         print("No System admin with that username.")
 

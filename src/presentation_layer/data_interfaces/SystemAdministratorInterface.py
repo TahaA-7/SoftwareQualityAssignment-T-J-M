@@ -15,6 +15,7 @@ import random, string
 from getpass import getpass
 
 from presentation_layer.utils.Session import Session
+from presentation_layer.menus.LoginMenu import LoginMenu
 
 from presentation_layer.menus.CreateOrUpdateEmployee import CreateOrUpdateEmployee
 from presentation_layer.menus.CreateOrUpdateTraveller import CreateOrUpdateTraveller
@@ -109,6 +110,8 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
                 case '0':
                     print("Exiting System Administrator menu.")
                     Session.set_loggedin_false()
+                    LoginMenu.username = ""
+                    LoginMenu.password = ""
                     break
                 case _:
                     print("Invalid choice. Please enter a valid number.")
@@ -131,7 +134,8 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
 
     @classmethod
     def delete_service_engineer(cls):
-        cls.delete_data_methods.deleteServiceEngineer()
+        username_or_id = input("Enter Service Engineer username or ID to delete: ").strip()
+        cls.delete_data_methods.deleteServiceEngineer(username_or_id)
 
     @classmethod
     def reset_service_engineer_password(cls):

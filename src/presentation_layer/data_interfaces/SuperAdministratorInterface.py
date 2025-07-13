@@ -7,6 +7,7 @@ from logic_layer.BackupMethods import BackupMethods
 from presentation_layer.utils.Session import Session
 
 from presentation_layer.menus.CreateOrUpdateEmployee import CreateOrUpdateEmployee
+from presentation_layer.menus.LoginMenu import LoginMenu
 
 
 class SuperAdministratorInterface(SystemAdministratorInterface):
@@ -115,6 +116,8 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
                 case '0':
                     print("Exiting Super Administrator menu.")
                     Session.set_loggedin_false()
+                    LoginMenu.username = ""
+                    LoginMenu.password = ""
                     break
                 case _:
                     print("Invalid choice. Please enter a valid number.")
@@ -132,7 +135,8 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
     @classmethod
     def delete_system_administrator(cls):
-        cls.delete_data_methods.deleteSystemAdmin()
+        username_or_id = input("Enter Service Engineer username or ID to delete: ").strip()
+        cls.delete_data_methods.deleteSystemAdmin(username_or_id)
 
     @classmethod
     def reset_system_administrator_password(cls):

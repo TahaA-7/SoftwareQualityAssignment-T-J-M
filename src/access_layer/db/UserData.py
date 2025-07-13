@@ -26,7 +26,7 @@ class user_data:
     def get_all_users(self):
         with self.db.connect() as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, username, hashed_salted_password, role, first_name, last_name, is_active FROM users")
+            cursor.execute("SELECT * FROM users")
             return cursor.fetchall()
         
     def add_user(self, id, username, hashed_salted_password, first_name, last_name, user_type=Roles.SERVICE_ENGINEER.value):
@@ -71,12 +71,15 @@ class user_data:
             except Exception:
                 return False
 
-    def delete_user(self, username):
+    def delete_user(self, username_or_id):
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
-                cursor.execute("DELETE FROM users WHERE username = ?", (username.lower(),))
-            return True
+                cursor.execute(
+                    "DELETE FROM users WHERE id = ? OR LOWER(username) = ?",
+                    (username_or_id, username_or_id.lower())
+                )
+                return cursor.rowcount > 0
         except Exception:
             return False
 

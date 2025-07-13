@@ -402,7 +402,8 @@ class CreateOrUpdateMenu:
 
     def _generate_license_number(self):
         # unique license number in `XXDDDDDDD` or `XDDDDDDDD` format
-        existing_licenses = {trav['license_number'] for trav in self.traveller_data_obj.get_travellers()}
+        # trav[12] is the license number
+        existing_licenses = {trav[12] for trav in self.traveller_data_obj.get_travellers()}
         while True:
             # Randomly choose format
             if random.choice([True, False]):

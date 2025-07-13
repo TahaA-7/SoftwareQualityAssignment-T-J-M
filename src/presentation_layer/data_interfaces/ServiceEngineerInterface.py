@@ -8,6 +8,7 @@ from DataModels.ScooterModel import Scooter
 from getpass import getpass
 
 from presentation_layer.utils.Session import Session
+from presentation_layer.menus.LoginMenu import LoginMenu
 
 import maskpass
 
@@ -43,6 +44,8 @@ f"""What do you want to do?:
 
                 case 'L':
                     Session.set_loggedin_false()
+                    LoginMenu.username = ""
+                    LoginMenu.password = ""
                     break
                 case _:
                     print("Invalid input!")

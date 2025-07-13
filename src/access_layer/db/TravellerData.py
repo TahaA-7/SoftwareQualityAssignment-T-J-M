@@ -67,6 +67,8 @@ class traveller_data:
                 house_num = house_num if house_num != "" else curr_house_num
                 zip = zip if zip != "" else curr_zip
                 city = city if city != "" else curr_city
+                email = email if email != "" else curr_email
+                phone = phone if phone != "" else curr_phone
 
                 cursor.execute("""UPDATE travellers
                                 SET first_name = ?, last_name = ?, birthday = ?, gender = ?, street = ?, house_number = ?, zip_code = ?,
