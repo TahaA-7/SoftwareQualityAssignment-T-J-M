@@ -84,7 +84,7 @@ class scooter_data:
                 mileage = mileage if mileage != "" else mileage
                 last_maint_date = last_maint_date if last_maint_date != "" else curr_last_maint_date
                 cursor.execute("""UPDATE scooters
-                            SET serial = ?, brand = ?, model = ?, top_speed = ?, battery = ?, soc = ?, soc_range = ?, soc_min = ?, soc_max = ?,
+                            SET serial = ?, brand = ?, model = ?, top_speed = ?, battery_capacity = ?, state_of_charge = ?, soc_range = ?, soc_min = ?, soc_max = ?,
                                 lat = ?, lon = ?, out_of_service_status = ?, mileage = ?, last_maint_date = ?
                             WHERE serial = ?
                             """, (serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max,

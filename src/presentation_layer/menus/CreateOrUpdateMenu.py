@@ -4,10 +4,11 @@ from logic_layer.AddMethods import AddDataService
 from logic_layer.UpdateMethods import UpdateDataService
 from logic_layer.GetDataMethods import GetDataService
 
-import re
-import string
-import time
-import datetime
+from access_layer.db.TravellerData import traveller_data
+
+import random, uuid
+import string, re
+import time, datetime
 import maskpass
 from getpass import getpass
 
@@ -24,7 +25,7 @@ class CreateOrUpdateMenu:
     customer_id = registration_date = ""
     c_fname = c_lname = bday = gender = street = house_number = zip = city = c_email = phone = ""
     license_number = ""
-    traveller_data_obj = None
+    traveller_data_obj = traveller_data()
     # for scooter
     original_serial = ""
     serial = brand = model = top_speed = battery = soc = soc_range = soc_min = soc_max = lat = lon = out_of_service_status = mileage = last_maint_date = ""
@@ -298,7 +299,7 @@ class CreateOrUpdateMenu:
     #     pass
     def _handle_trav_birthday(self):
         birthday = input("Please enter a birthday (YYYY-MM-DD): ").strip()
-        self.bday = birthday if datetime.strptime(birthday, "%Y-%m-%d") else ""
+        self.bday = birthday if datetime.datetime.strptime(birthday, "%Y-%m-%d") else ""
     def _handle_trav_gender(self):
         gender = input("Please enter a gender (M/F/O): ").strip()
         self.gender = gender if gender.upper() in ("M", "F", "O", "MALE", "FEMALE", "OTHER") else ""
@@ -330,10 +331,7 @@ class CreateOrUpdateMenu:
         phone = phone.split("-")[-1] if "-" in phone else phone  # On a separate line for readability
         self.phone = phone if phone.isdigit() and len(phone) == 8 else ""
     def _handle_license_number(self):
-        license = input("Please enter a license number (XXDDDDDDD or XDDDDDDDD): ")
-        self.license_number = license if license.isalnum() and len(
-            license) == 9 and license[2:].isdigit() and license[0].isalpha() else ""
-        # string.isalnum() checks for alphabetic and numeric characters
+        self.license_number = self._generate_license_number()
 
 
     # SCOOTERS
@@ -401,6 +399,21 @@ class CreateOrUpdateMenu:
 [O]ther
 """)).strip().upper()
         return city_choice
+
+    def _generate_license_number(self):
+        # unique license number in `XXDDDDDDD` or `XDDDDDDDD` format
+        existing_licenses = {trav['license_number'] for trav in self.traveller_data_obj.get_travellers()}
+        while True:
+            # Randomly choose format
+            if random.choice([True, False]):
+                # XXDDDDDDD
+                lic = ''.join(random.choices(string.ascii_uppercase, k=2)) + ''.join(random.choices(string.digits, k=7))
+            else:
+                # XDDDDDDDD
+                lic = random.choice(string.ascii_uppercase) + ''.join(random.choices(string.digits, k=8))
+            if lic not in existing_licenses:
+                break
+        return lic
 
     def _handle_input_length(self, inp):
         user_inp = inp[-1].upper() if len(inp) > 0 else " "

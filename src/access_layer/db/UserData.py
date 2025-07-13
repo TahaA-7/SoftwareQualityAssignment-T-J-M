@@ -30,7 +30,7 @@ class user_data:
             return cursor.fetchall()
         
     def add_user(self, id, username, hashed_salted_password, first_name, last_name, user_type=Roles.SERVICE_ENGINEER.value):
-        if id in ["", None]: id = str(uuid.uuid4)
+        if id in ["", None]: id = str(uuid.uuid4())
         # if user_type > 1 and Session.user.role.value != 3:
         #     return None
         # ^ not necessary since the add system admin method is only accessible by a super admin through the presentation layer anyway
@@ -41,12 +41,12 @@ class user_data:
                     INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
                     VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
                 ''', (id, username.lower(), hashed_salted_password, user_type, first_name, last_name, False))
-                return cursor.fetchone()
+                return True
             except Exception:
                 return False
             
     def add_serviceEngineer(self, id, username, hashed_salted_password, first_name, last_name):
-        if id in ["", None]: id = str(uuid.uuid4)
+        if id in ["", None]: id = str(uuid.uuid4())
         with self.db.connect() as conn:
             cursor = conn.cursor()
             try:
@@ -59,7 +59,7 @@ class user_data:
                 return False
             
     def add_systemAdmin(self, id, username, hashed_salted_password, first_name, last_name):
-        if id in ["", None]: id = str(uuid.uuid4)
+        if id in ["", None]: id = str(uuid.uuid4())
         with self.db.connect() as conn:
             cursor = conn.cursor()
             try:

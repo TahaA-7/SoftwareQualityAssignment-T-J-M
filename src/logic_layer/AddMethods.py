@@ -36,10 +36,10 @@ class AddDataService():
                 print("Invalid input. Please enter a number.")
 
     def addUser(self, username, password, first_name, last_name, user_type=Roles.SERVICE_ENGINEER.value):
-        id = str(uuid.uuid4)
+        id = str(uuid.uuid4())
         hashed_salted = PasswordHasherSalter.hash_salt_password(password)
         added_user = self.user_.add_user(id, username, hashed_salted, first_name, last_name, user_type)
-        print("User added successfully.") if added_user else "Oops, user couldn't be registered"
+        # print("User added successfully.") if added_user else "Oops, user couldn't be registered"
         return added_user
     
     def addSystemAdmin(self):

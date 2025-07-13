@@ -17,10 +17,10 @@ from getpass import getpass
 
 class CreateOrUpdateTraveller(CreateOrUpdateMenu):
     def menu(self):
-        self.traveller_data_obj = traveller_data()
         print("""Welcome
 -   -   -   -   -   -   -""")
         while True:
+            self.traveller_data_obj = traveller_data()
             print([f for f in self._get_traveller_fields_dict().items()])
             user_choice = self._handle_input_length(getpass(
 f"""Please select a field and set it to a (new) value
@@ -97,20 +97,20 @@ f"""Please select a field and set it to a (new) value
             print("Error: cannot submit because one or more fields remained blank " + 
 "either because left unhandled or couldn't be updated due to an invalid input.")
 
-    def _generate_license_number(self):
-        # unique license number in `XXDDDDDDD` or `XDDDDDDDD` format
-        existing_licenses = {trav['license_number'] for trav in traveller_data.get_travellers()}
-        while True:
-            # Randomly choose format
-            if random.choice([True, False]):
-                # XXDDDDDDD
-                lic = ''.join(random.choices(string.ascii_uppercase, k=2)) + ''.join(random.choices(string.digits, k=7))
-            else:
-                # XDDDDDDDD
-                lic = random.choice(string.ascii_uppercase) + ''.join(random.choices(string.digits, k=8))
-            if lic not in existing_licenses:
-                break
-        return lic
+    # def _generate_license_number(self):
+    #     # unique license number in `XXDDDDDDD` or `XDDDDDDDD` format
+    #     existing_licenses = {trav['license_number'] for trav in self.traveller_data_obj.get_travellers()}
+    #     while True:
+    #         # Randomly choose format
+    #         if random.choice([True, False]):
+    #             # XXDDDDDDD
+    #             lic = ''.join(random.choices(string.ascii_uppercase, k=2)) + ''.join(random.choices(string.digits, k=7))
+    #         else:
+    #             # XDDDDDDDD
+    #             lic = random.choice(string.ascii_uppercase) + ''.join(random.choices(string.digits, k=8))
+    #         if lic not in existing_licenses:
+    #             break
+    #     return lic
 
     def _handle_update(self):
         return super()._handle_update("traveller")
