@@ -56,17 +56,17 @@ class DBContext:
                 CREATE TABLE IF NOT EXISTS travellers (
                     customer_id TEXT PRIMARY KEY,
                     registration_date TEXT,
-                    first_name TEXT,
-                    last_name TEXT,
+                    first_name VARCHAR(50),
+                    last_name VARCHAR(50),
                     birthday TEXT,
-                    gender TEXT,
-                    street_name TEXT,
+                    gender VARCHAR(10),
+                    street_name VARCHAR(100),
                     house_number INTEGER,
-                    zip_code TEXT,
-                    city TEXT,
-                    email TEXT,
-                    mobile_phone TEXT,
-                    driving_license_number TEXT
+                    zip_code VARCHAR(10),
+                    city VARCHAR(50),
+                    email VARCHAR(100),
+                    mobile_phone VARCHAR(20),
+                    driving_license_number VARCHAR(20)
                 )
             ''')
 
@@ -145,10 +145,10 @@ class DBContext:
                 CREATE TABLE IF NOT EXISTS users (
                     id TEXT PRIMARY KEY,
                     username TEXT PRIMARY KEY,
-                    hashed_salted_password TEXT,
-                    role TEXT,
-                    first_name TEXT,
-                    last_name TEXT,
+                    hashed_salted_password VARCHAR(128),
+                    role VARCHAR(30),
+                    first_name VARCHAR(50),
+                    last_name VARCHAR(50),
                     registration_date TEXT,
                     is_active BOOL
                 )
@@ -227,18 +227,18 @@ class DBContext:
             # Scooter table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS scooters (
-                    serial_number TEXT PRIMARY KEY,
+                    serial_number VARCHAR(20) PRIMARY KEY,
                     in_service_date DATE,
-                    brand TEXT,
-                    model TEXT,
+                    brand VARCHAR(50),
+                    model VARCHAR(50),
                     top_speed INTEGER,
                     battery_capacity INTEGER,
                     state_of_charge INTEGER,
                     target_soc_min INTEGER,
                     target_soc_max INTEGER,
-                    latitude TEXT,
-                    longitude TEXT,
-                    out_of_service TEXT,
+                    latitude VARCHAR(20),
+                    longitude VARCHAR(20),
+                    out_of_service VARCHAR(20),
                     mileage REAL,
                     last_maintenance_date DATE
                 )
@@ -322,9 +322,9 @@ class DBContext:
                 CREATE TABLE IF NOT EXISTS logs (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     timestamp TEXT,
-                    username TEXT,
-                    description TEXT,
-                    additional_info TEXT,
+                    username VARCHAR(20),
+                    description VARCHAR(225),
+                    additional_info VARCHAR(225),
                     suspicious INTEGER
                 )
             ''')
@@ -332,9 +332,9 @@ class DBContext:
             # Backup codes table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS backup_codes (
-                    code TEXT PRIMARY KEY,
-                    assigned_to_username TEXT,
-                    backup_filename TEXT,
+                    code VARCHAR(64) PRIMARY KEY,
+                    assigned_to_username VARCHAR(20),
+                    backup_filename VARCHAR(100),
                     created_at TEXT,
                     used INTEGER
                 )
