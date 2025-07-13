@@ -53,25 +53,30 @@ class UpdateDataService:
         print("No System Administrator with that username.")
 
 
-    def updateUser_password(self, username, password):
+    def updateUser_password(self, username_or_id, password):
         hashed_salted = PasswordHasherSalter.hash_salt_password(password)
-        is_updated_bool = self.user_.update_user_password(username, hashed_salted)
-        return is_updated_bool
+        updated_user = self.user_.update_user_password(username_or_id, hashed_salted)
+        return updated_user != None
 
-    def updateTraveller(self):
-        customer_id = input("Traveller ID: ").strip()
-        field = input("Which field to update (first_name, email, city, etc.): ").strip()
-        new_value = input("New value: ").strip()
-        allowed_fields = [
-            'first_name', 'last_name', 'birthday', 'gender',
-            'street_name', 'house_number', 'zip_code', 'city',
-            'email', 'mobile_phone', 'driving_license_number'
-        ]
-        if field not in allowed_fields:
-            print("Invalid field.")
-            return
-        self.traveller_.update_traveller(customer_id, field, new_value)
-        print("Traveller updated.")
+    def updateTraveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone):
+        # customer_id = input("Traveller ID: ").strip()
+        # field = input("Which field to update (first_name, email, city, etc.): ").strip()
+        # new_value = input("New value: ").strip()
+        # allowed_fields = [
+        #     'first_name', 'last_name', 'birthday', 'gender',
+        #     'street_name', 'house_number', 'zip_code', 'city',
+        #     'email', 'mobile_phone', 'driving_license_number'
+        # ]
+        # if field not in allowed_fields:
+        #     print("Invalid field.")
+        #     return
+        # self.traveller_.update_traveller(customer_id, field, new_value)
+        # print("Traveller updated.")
+        for traveller in self.traveller_.get_travellers():
+            if traveller[0] == customer_id:
+                res = self.traveller_.update_traveller(customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone)
+                return res
+        return False
  
     def updateScooterAttributes(self, scooter_obj: Scooter, SoC, target_SoC, location, out_of_service_status, mileage, last_maintenance):
         SoC = SoC if SoC != "" else None
@@ -85,8 +90,14 @@ class UpdateDataService:
             target_SoC_min, target_SoC_max, lat, long, out_of_service_status, mileage, last_maintenance)
         return updated_scooter
 
-    def updateScooter(self):
-        pass
+    def updateScooter(self, original_serial, serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max, lat, lon, 
+            out_of_service_status, mileage, last_maint_date):
+        for scooter in self.scooter_.get_scooter_single():
+            if scooter[0] == original_serial:
+                res = self.scooter_.update_scooter(original_serial, serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max,
+                    lat, lon, out_of_service_status, mileage, last_maint_date)
+                return res
+        return False
 
 
     def update_service_engineer(self):

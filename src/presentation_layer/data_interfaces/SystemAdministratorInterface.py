@@ -31,6 +31,11 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
     @classmethod
     def system_start(cls):
         while True:
+            cls.get_data_methods = GetDataService()
+            cls.add_data_methods = AddDataService()
+            cls.delete_data_methods = DeleteDataService()
+            cls.update_data_methods = UpdateDataService()
+            cls.backup_methods = BackupMethods()
             print("\n--- System Administrator Menu ---")
 
             print("[1] Update your own password")
@@ -79,9 +84,9 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
                 case '8': 
                     cls.reset_service_engineer_password()
                 case '9': 
-                    cls.update_cls_account_profile()
+                    cls.update_own_account_profile()
                 case '10': 
-                    cls.delete_cls_account()
+                    cls.delete_own_account()
                 case '11': 
                     cls.make_backend_backup()
                 case '12': 
@@ -129,27 +134,22 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
         cls.delete_data_methods.deleteServiceEngineer()
 
     @classmethod
-    def reset_service_engineer_password(cls, engineer: User):
-        # replaces current with a temporary password
-        """Password:
-            ○ must have a length of at least 12 characters
-            ○ must be no longer than 30 characters
-            ○ can contain letters (a-z), (A-Z), numbers (0-9), Special characters such as ~!@#$%&_-
-            +=`|\(){}[]:;'<>,.?/
-            ○ must have a combination of at least one lowercase letter, one uppercase letter, one digit,
-            and one special character:
-        """
-        # Generate a valid temporary password
-        temp_password = cls.__generate_temp_password()
+    def reset_service_engineer_password(cls):
+        temp_pw = cls._generate_temp_password()
+        username_or_id = input("Please enter the name or ID of the service engineer to reset their password: ")
+        user = cls.get_data_methods.get_user_by_username_or_id(username_or_id)
+        if user != None:
+            updated_user = cls.update_data_methods.updateUser_password(username_or_id, temp_pw)
+            if updated_user != None:
+                print("Service engineer password sucessfully reset")
+            else:
+                print("Error: could not update service engineer password")
+        else:
+            print("Error: no user found with that username or ID")
 
-        hashed_salted_password = PasswordHasherSalter.hash_salt_password(temp_password)
-        # salted_password = PasswordHasherSalter.salt_password(hashed_salted_password)
-        engineer.hashed_salted_password = hashed_salted_password
-
-        # return temp_password
 
     @classmethod
-    def __generate_temp_password(cls):
+    def _generate_temp_password(cls):
         specials = "~!@#$%&_-+=`|\\(){}[]:;'<>,.?/"
         temp_password = ""
         while True:
@@ -167,11 +167,11 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
 
     # OWN ACCOUNT
     @classmethod
-    def update_cls_account_profile(cls):
+    def update_own_account_profile(cls):
         cls.update_data_methods.update_SystemAdmin()
 
     @classmethod
-    def delete_cls_account(cls):
+    def delete_own_account(cls):
         cls.delete_data_methods.deleteSystemAdmin()
 
     # BACKUP

@@ -15,7 +15,7 @@ from getpass import getpass
 
 class CreateOrUpdateMenu:
     alnum_dash = set(string.ascii_letters + string.digits + "-")
-    user_type = "service_engineer"
+    user_type = 1  # service_engineer
     # for service_engineer or system_admin account/profile
     user_id = ""
     username = password = u_fname = u_lname = ""
@@ -26,6 +26,7 @@ class CreateOrUpdateMenu:
     license_number = ""
     traveller_data_obj = None
     # for scooter
+    original_serial = ""
     serial = brand = model = top_speed = battery = soc = soc_range = soc_min = soc_max = lat = lon = out_of_service_status = mileage = last_maint_date = ""
 
     city_names_dict = {"A": "Amsterdam", "R": "Rotterdam", "D": "Den Haag", "U": "Utrecht", "M": "Maastricht",
@@ -204,11 +205,13 @@ class CreateOrUpdateMenu:
             else:
                 print("Error: no user found with that ID or username!")
         elif type == "traveller":
-            result = update_data_service_obj.updateTraveller(self.c_fname, self.c_lname, self.bday, self.gender,
+            self.customer_id = input("Please enter the ID of the traveller to be updated: ")
+            result = update_data_service_obj.updateTraveller(self.customer_id, self.c_fname, self.c_lname, self.bday, self.gender,
                 self.street, self.house_number, self.zip, self.city, self.c_email, self.phone, 
                 self.license_number)
         elif type == "scooter":
-            result = update_data_service_obj.updateScooter(self.serial, self.brand, self.model, self.top_speed,
+            self.original_serial = input("Please enter the original serial number of the scooter to be updated: ")
+            result = update_data_service_obj.updateScooter(self.original_serial, self.serial, self.brand, self.model, self.top_speed,
                 self.battery, self.soc_min, self.soc_max, self.lat, self.lon, self.out_of_service_status,
                 self.mileage)
 

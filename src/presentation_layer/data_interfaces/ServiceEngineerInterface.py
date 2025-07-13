@@ -13,6 +13,8 @@ import maskpass
 
 
 class ServiceEngineerInterface():
+    get_data_methods = GetDataService()
+    update_data_methods = UpdateDataService()
     # service engineer is standard user
     def __init__(cls, ):
         pass
@@ -22,6 +24,8 @@ class ServiceEngineerInterface():
         print("""Welcome to service engineer interface'
 -   -   -   -   -   -   -""")
         while True:
+            cls.get_data_methods = GetDataService()
+            cls.update_data_methods = UpdateDataService()
             user_choice = StringValidations.handle_input_length(getpass(
 f"""What do you want to do?:
 [1] update own password

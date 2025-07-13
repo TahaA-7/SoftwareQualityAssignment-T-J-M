@@ -6,6 +6,9 @@ class scooter_data:
     def __init__(self):
         self.db = DBContext()
 
+
+    # def get_scooters()
+
     def get_scooter_single(self, brand, model):
         with self.db.connect() as conn:
             cursor = conn.cursor()
@@ -52,11 +55,43 @@ class scooter_data:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM scooters WHERE serial_number = ?", (serial_number,))
 
-    def update_scooter(self, serial_number, field, value):
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            query = f"UPDATE scooters SET {field} = ? WHERE serial_number = ?"
-            cursor.execute(query, (value, serial_number))
+    def update_scooter(self, original_serial, serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max,
+                    lat, lon, out_of_service_status, mileage, last_maint_date):
+        try:
+            with self.db.connect() as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM scooters WHERE serial_number = ?", (original_serial,))
+                row = cursor.fetchone()
+                if not row:
+                    print("Scooter not found")
+                    return False
+                # curr as in current
+                curr_serial, curr_brand, curr_model, curr_top_speed, curr_battery, curr_soc, curr_soc_range, curr_soc_min, curr_soc_max, = row
+                curr_lat, curr_lon, curr_out_of_service_status, curr_mileage, curr_last_maint_date = row
+                # Use current value if input is blank
+                serial = serial if serial != "" else curr_serial
+                brand = brand if brand != "" else curr_brand
+                model = model if model != "" else curr_model
+                top_speed = top_speed if top_speed != "" else curr_top_speed
+                battery = battery if battery != "" else curr_battery
+                soc = soc if soc != "" else curr_soc
+                soc_range = soc_range if soc_range != "" else curr_soc_range
+                soc_min = soc_min if soc_min != "" else curr_soc_min
+                soc_max = soc_max if soc_max != "" else curr_soc_max
+                lat = lat if lat != "" else curr_lat
+                lon = lon if lon != "" else curr_lon
+                out_of_service_status = out_of_service_status if out_of_service_status not in (False, "", "ACTIVE", "active") else curr_out_of_service_status
+                mileage = mileage if mileage != "" else mileage
+                last_maint_date = last_maint_date if last_maint_date != "" else curr_last_maint_date
+                cursor.execute("""UPDATE scooters
+                            SET serial = ?, brand = ?, model = ?, top_speed = ?, battery = ?, soc = ?, soc_range = ?, soc_min = ?, soc_max = ?,
+                                lat = ?, lon = ?, out_of_service_status = ?, mileage = ?, last_maint_date = ?
+                            WHERE serial = ?
+                            """, (serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max,
+                        lat, lon, out_of_service_status, mileage, last_maint_date, original_serial))
+                return cursor.rowcount > 0
+        except Exception:
+            return False
     
     def update_scooter_attributes(
             self, scooter_obj: tuple, SoC=None, target_SoC_min=None, target_SoC_max=None, lat=None, lon=None, 
@@ -99,3 +134,5 @@ class scooter_data:
             params.append(scooter_obj[3])
             cursor.execute(query, params)
             conn.commit()
+
+            return cursor.rowcount > 0

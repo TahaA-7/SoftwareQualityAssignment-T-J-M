@@ -6,6 +6,8 @@ from logic_layer.UpdateMethods import UpdateDataService
 from logic_layer.BackupMethods import BackupMethods
 from presentation_layer.utils.Session import Session
 
+from presentation_layer.menus.CreateOrUpdateEmployee import CreateOrUpdateEmployee
+
 
 class SuperAdministratorInterface(SystemAdministratorInterface):
     '''
@@ -23,6 +25,11 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
     @classmethod
     def super_start(cls):
         while True:
+            cls.get_data_methods = GetDataService()
+            cls.add_data_methods = AddDataService()
+            cls.delete_data_methods = DeleteDataService()
+            cls.update_data_methods = UpdateDataService()
+            cls.backup_methods = BackupMethods()
             print("\n--- Super Administrator Menu ---")
 
             print("[1] Update a Scooter")
@@ -115,7 +122,9 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
     # === SUPER ADMIN–ONLY METHODS ===
     @classmethod
     def add_system_administrator(cls):
-        cls.add_data_methods.addSystemAdmin()
+        employee_menu = CreateOrUpdateEmployee()
+        employee_menu.user_type = 2  # system_administrator
+        employee_menu.menu()
 
     @classmethod
     def update_system_administrator(cls):
@@ -127,7 +136,17 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
     @classmethod
     def reset_system_administrator_password(cls):
-        pass
+        temp_pw = cls._generate_temp_password()
+        username_or_id = input("Please enter the name or ID of the system admin to reset their password: ")
+        user = cls.get_data_methods.get_user_by_username_or_id(username_or_id)
+        if user != None:
+            updated_user = cls.update_data_methods.updateUser_password(username_or_id, temp_pw)
+            if updated_user:
+                print("System admin password sucessfully reset")
+            else:
+                print("Error: could not update system admin password")
+        else:
+            print("Error: no user found with that username or ID")
 
     @classmethod
     def share_backup_key(cls):

@@ -8,6 +8,7 @@ from DataModels.TravellerModel import Traveller
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
 
+from presentation_layer.utils.Roles import Roles
 from presentation_layer.menus.RegisterMenu import RegisterMenu 
 
 import re, datetime, uuid
@@ -34,66 +35,69 @@ class AddDataService():
             except ValueError:
                 print("Invalid input. Please enter a number.")
 
-    def addUser(self, username, password, first_name, last_name, user_type="service_engineer"):
+    def addUser(self, username, password, first_name, last_name, user_type=Roles.SERVICE_ENGINEER.value):
+        id = str(uuid.uuid4)
         hashed_salted = PasswordHasherSalter.hash_salt_password(password)
-        added_user = self.user_.add_user(username, hashed_salted, first_name, last_name)
+        added_user = self.user_.add_user(id, username, hashed_salted, first_name, last_name, user_type)
         print("User added successfully.") if added_user else "Oops, user couldn't be registered"
         return added_user
     
     def addSystemAdmin(self):
-        username = self.registerMenu_.handle_username()
-        password = self.registerMenu_.handle_password()
-        first_name = self.registerMenu_.handle_first_name_submit()
-        last_name = self.registerMenu_.handle_last_name_submit()
+        # username = self.registerMenu_.handle_username()
+        # password = self.registerMenu_.handle_password()
+        # first_name = self.registerMenu_.handle_first_name_submit()
+        # last_name = self.registerMenu_.handle_last_name_submit()
 
-        hashed_salted = PasswordHasherSalter.hash_salt_password(password)
+        # hashed_salted = PasswordHasherSalter.hash_salt_password(password)
 
-        self.user_.add_systemAdmin(username, hashed_salted, first_name, last_name)
-        print("User added successfully.")
+        # self.user_.add_systemAdmin(username, hashed_salted, first_name, last_name)
+        # print("User added successfully.")
+        pass
 
     def addServiceEngineer(self):
-        username = self.registerMenu_.handle_username()
-        password = self.registerMenu_.handle_password()
-        first_name = self.registerMenu_.handle_first_name_submit()
-        last_name = self.registerMenu_.handle_last_name_submit()
+        # username = self.registerMenu_.handle_username()
+        # password = self.registerMenu_.handle_password()
+        # first_name = self.registerMenu_.handle_first_name_submit()
+        # last_name = self.registerMenu_.handle_last_name_submit()
 
-        hashed_salted = PasswordHasherSalter.hash_salt_password(password)
+        # hashed_salted = PasswordHasherSalter.hash_salt_password(password)
 
-        self.user_.add_serviceEngineer(username, hashed_salted, first_name, last_name)
-        print("User added successfully.")
+        # self.user_.add_serviceEngineer(username, hashed_salted, first_name, last_name)
+        # print("User added successfully.")
+        pass
 
     def addScooter(self, serial, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon,
                    out_of_service, mileage, last_maint, in_service_date=datetime.time()):
     
         is_valid_flag = True
 
-        if not str(top_speed).isdigit():
-            print("Invalid input: top_speed (km/h) must be a whole number")
-            is_valid_flag = False
-        if not str(battery).isdigit():
-            print("Invalid input: battery capacity (Wh) must be a whole number")
-            is_valid_flag = False
-        if not str(soc).isdigit():
-            print("Invalid input: (Soc) State of Charge (%) must be a whole number")
-            is_valid_flag = False
-        if not str(soc_min).isdigit():
-            print("Invalid input: minimum SoC must be a whole number")
-            is_valid_flag = False
-        if not str(soc_max).isdigit():
-            print("Invalid input: maximum SoC must be a whole number")
-            is_valid_flag = False
-        if not str(lat).isdecimal():
-            print("Invalid input: maximum SoC must be a decimal number")
-            is_valid_flag = False
-        if not str(lon).isdecimal():
-            print("Invalid input: longitude must be a decimal number")
-            is_valid_flag = False
-        if not str(out_of_service).upper() in ("Y", "N"):
-            print("Invalid input: out_of_service boolean must be either `Y` or `N`")
-            is_valid_flag = False
-        if not str(mileage).isdigit():
-            print("Invalid input: mileage (km/h) must be a whole number")
-            is_valid_flag = False
+        # if not str(top_speed).isdigit():
+        #     print("Invalid input: top_speed (km/h) must be a whole number")
+        #     is_valid_flag = False
+        # if not str(battery).isdigit():
+        #     print("Invalid input: battery capacity (Wh) must be a whole number")
+        #     is_valid_flag = False
+        # if not str(soc).isdigit():
+        #     print("Invalid input: (Soc) State of Charge (%) must be a whole number")
+        #     is_valid_flag = False
+        # if not str(soc_min).isdigit():
+        #     print("Invalid input: minimum SoC must be a whole number")
+        #     is_valid_flag = False
+        # if not str(soc_max).isdigit():
+        #     print("Invalid input: maximum SoC must be a whole number")
+        #     is_valid_flag = False
+        # if not str(lat).isdecimal():
+        #     print("Invalid input: maximum SoC must be a decimal number")
+        #     is_valid_flag = False
+        # if not str(lon).isdecimal():
+        #     print("Invalid input: longitude must be a decimal number")
+        #     is_valid_flag = False
+        # if not str(out_of_service).upper() in ("Y", "N"):
+        #     print("Invalid input: out_of_service boolean must be either `Y` or `N`")
+        #     is_valid_flag = False
+        # if not str(mileage).isdigit():
+        #     print("Invalid input: mileage (km/h) must be a whole number")
+        #     is_valid_flag = False
         
         if is_valid_flag:
             soc_range = ";".join(soc_min, soc_max)

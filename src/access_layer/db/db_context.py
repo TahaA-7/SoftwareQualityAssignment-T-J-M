@@ -200,6 +200,29 @@ class DBContext:
                     None,
                     True
                 ))
+            cursor.execute("SELECT 1 FROM users WHERE username = ?", ("DummyAcc222_",))
+            if cursor.fetchone() is None:
+                cursor.execute('''
+                    INSERT INTO users (
+                        id,
+                        username,
+                        hashed_salted_password,
+                        role,
+                        first_name,
+                        last_name,
+                        registration_date,
+                        is_active
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    "ead64393-6e8b-48df-be72-3fd1e2a7844e",
+                    "DummyAcc222_",
+                    initial_dummy_pass,
+                    Roles.SYSTEM_ADMINISTRATOR.value,
+                    "Dummy",
+                    "SystemAdmin",
+                    None,
+                    True
+                ))
 
             # Scooter table
             cursor.execute('''
