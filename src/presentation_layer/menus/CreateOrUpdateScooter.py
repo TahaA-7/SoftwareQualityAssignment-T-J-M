@@ -12,8 +12,14 @@ import datetime
 import maskpass
 from getpass import getpass
 
+from DataModels.ScooterModel import Scooter
+from access_layer.db.ScooterData import scooter_data
 
 class CreateOrUpdateScooter(CreateOrUpdateMenu):
+
+    def __init__(self):
+        self.scooter_ = scooter_data()
+        
     def menu(self):
         print("""Welcome
 -   -   -   -   -   -   -""")
@@ -93,3 +99,51 @@ f"""Please select a field and set it to a (new) value
 
     def _handle_update(self):
         return super()._handle_update("scooter")
+
+
+    def get_int(self, prompt):
+        while True:
+            try:
+                return int(input(prompt))
+            except ValueError:
+                print("Invalid input. Please enter a whole number.")
+
+    def get_float(self, prompt):
+        while True:
+            try:
+                return float(input(prompt))
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+
+    def addScooter_(self):
+        serial = input("Serial Number: ").strip()
+        brand = input("Brand: ").strip()
+        model = input("Model: ").strip()
+        top_speed = self.get_int("Top speed (km/h): ")
+        battery = self.get_int("Battery capacity (Wh): ")
+        soc = self.get_int("State of charge (%): ")
+        soc_min = self.get_int("Min SoC: ")
+        soc_max = self.get_int("Max SoC: ")
+        lat = self.get_float("Latitude: ")
+        lon = self.get_float("Longitude: ")
+
+        while True:
+            out_of_service_input = input("Is out of service (y/n): ").strip().lower()
+            if out_of_service_input in ['y', 'n']:
+                out_of_service = out_of_service_input == 'y'
+                break
+            print("Please enter 'y' or 'n'.")
+
+        mileage = self.get_float("Mileage (km): ")
+        
+        while True:
+            last_maint = input("Last maintenance date (YYYY-MM-DD): ").strip()
+            try:
+                datetime.datetime.strptime(last_maint, "%Y-%m-%d")
+                break
+            except ValueError:
+                print("Invalid date format. Please use YYYY-MM-DD.")
+
+        scooter = Scooter(serial, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint)
+        self.scooter_.add_scooter(scooter)
+        print("Scooter added successfully.")
