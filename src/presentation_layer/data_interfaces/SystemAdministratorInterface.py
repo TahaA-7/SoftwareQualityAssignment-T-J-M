@@ -223,7 +223,7 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
     @classmethod
     def add_scooter(cls):              
         scootermenu_obj = CreateOrUpdateScooter()
-        scootermenu_obj.addScooter_()
+        scootermenu_obj.menu()
 
     @classmethod
     def update_scooter(cls):
