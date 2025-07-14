@@ -26,7 +26,7 @@ class GetDataService:
     def list_users(self):
         users = self.user_.get_all_users()
         print("List of Users and their Roles:")
-        for id, username, p, role, first_name, last_name, is_active in users:
+        for id, username, p, role, first_name, last_name, r, is_active in users:
             print(f"- {username} ({role}): {first_name} {last_name}")
 
     def get_user_by_username_or_id(self, username_or_id: str):

@@ -219,7 +219,7 @@ class CreateOrUpdateMenu:
                 self.mileage, last_maint_date=datetime.date.today())
 
         if result:
-            print('added sucessfully')
+            print('Updated sucessfully')
         else:
             print('error: update failed')
         return result

@@ -17,6 +17,7 @@ from getpass import getpass
 
 class CreateOrUpdateEmployee(CreateOrUpdateMenu):
     user_type = "employee"
+    user_role = 1
     def menu(self):
         print("""Welcome
 -   -   -   -   -   -   -""")
@@ -61,7 +62,7 @@ f"""Please select a field and set it to a (new) value or leave blank to keep old
         if "" not in self._get_employee_fields_dict().items():
             add_data_service_obj = AddDataService()
             added_user = add_data_service_obj.addUser(
-                self.username, self.password, self.u_fname, self.u_lname, self.user_type)
+                self.username, self.password, self.u_fname, self.u_lname, self.user_role)
             if added_user != None:
                 Logger.log(self.username, "Registered new account")
                 print("User registered succesfully.")

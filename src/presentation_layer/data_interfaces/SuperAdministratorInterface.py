@@ -126,7 +126,7 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
     @classmethod
     def add_system_administrator(cls):
         employee_menu = CreateOrUpdateEmployee()
-        employee_menu.user_type = 2  # system_administrator
+        employee_menu.user_role = 2  # system_administrator
         employee_menu.menu()
 
     @classmethod
