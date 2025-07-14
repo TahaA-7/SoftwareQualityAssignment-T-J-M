@@ -69,16 +69,11 @@ f"""What do you want to do?:
     def update_scooter_attributes(cls):
         updatedataservice_obj = UpdateDataService()
         getdataservice_obj = GetDataService()
-        brand_model_input = input(
-            "Please enter a brand and model name, separated by a triple hypen (---): ")
-        if brand_model_input.count("---") == 1:
-            brand_input, model_input = brand_model_input.split(
-                "---")
-        else:
-            print("Invalid input")
-            return None
+        serial = input(
+            "Please enter the serial number of the scooter to update: ")
+ 
         
-        scooter_obj = getdataservice_obj.get_scooter(brand_input, model_input)
+        scooter_obj = getdataservice_obj.get_scooter(serial)
         if scooter_obj != None: # and type(scooter_obj, Scooter)
             state_of_charge_input = input("Please enter new State of Charge or leave empty: ")
             target_rage_SoC_input = input(

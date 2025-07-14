@@ -80,14 +80,21 @@ class UpdateDataService:
  
     def updateScooterAttributes(self, scooter_obj: Scooter, SoC, target_SoC, location, out_of_service_status, mileage, last_maintenance):
         SoC = SoC if SoC != "" else None
-        target_SoC_min, target_SoC_max = target_SoC.split("---") if target_SoC.count("---") == 1 else None
-        lat, long = location.split('---') if location.count("---") == 1 else None
+        target_SoC_min = target_SoC_max = None
+        if target_SoC.count("---") == 1:
+            target_SoC_min, target_SoC_max = target_SoC.split("---")
+        lat = lon = None
+        if location.count("---") == 1:
+            lat, lon = location.split("---")
         out_of_service_status = out_of_service_status if out_of_service_status != "" else None
         mileage = mileage if mileage != "" else None
-        last_maintenance = last_maintenance if datetime.strptime(last_maintenance, "%Y-%m-%d").date() else None
+        if last_maintenance not in (None, "", " "):
+            last_maintenance = last_maintenance if datetime.strptime(last_maintenance, "%Y-%m-%d").date() else None
+        else:
+            last_maintenance = None
 
         updated_scooter = self.scooter_.update_scooter_attributes(scooter_obj, SoC, 
-            target_SoC_min, target_SoC_max, lat, long, out_of_service_status, mileage, last_maintenance)
+            target_SoC_min, target_SoC_max, lat, lon, out_of_service_status, mileage, last_maintenance)
         return updated_scooter
 
     def updateScooter(self, original_serial, serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max, lat, lon, 

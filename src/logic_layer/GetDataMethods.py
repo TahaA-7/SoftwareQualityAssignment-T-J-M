@@ -46,9 +46,9 @@ class GetDataService:
                 return u_obj
         return None
 
-    def get_scooter(self, brand_input, model_input):
+    def get_scooter(self, serial):
         try:
-            result = self.scooter_.get_scooter_single(brand_input, model_input)[0]
+            result = self.scooter_.get_scooter_single(serial)[0]
             return result
         except Exception:
             return None
