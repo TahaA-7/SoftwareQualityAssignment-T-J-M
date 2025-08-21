@@ -70,13 +70,14 @@ class DeleteDataService:
                 return
 
     def deleteScooter(self, serial, confirm):
-        is_valid_flag = True
+        is_valid_flag = False
         # if not str(serial).strip().isdigit():
         #     is_valid_flag = False
         #     print("Invalid input: serial must be a whole number")
-        if not str(confirm).strip().upper() in ("Y", "N"):
+        if str(confirm).strip().upper() in ("Y", "N"):
+            is_valid_flag = True
+        else:
             print("Invalid input: confirmation must be either `Y or `N`")
-            is_valid_flag = False
 
         if is_valid_flag and confirm in ('y', 'Y'):
             self.scooter_.delete_scooter(serial)

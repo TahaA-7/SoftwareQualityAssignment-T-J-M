@@ -1,6 +1,6 @@
 from access_layer.db.db_context import DBContext
 from presentation_layer.utils.Roles import Roles
-# from presentation_layer.utils.Session import Session
+from presentation_layer.utils.Session import Session
 
 import uuid
 
@@ -9,6 +9,7 @@ class user_data:
         self.db = DBContext()
 
     def fetch_user(self, username_or_id):
+        # Should be accessible by all since this function is used to log in
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
@@ -24,15 +25,20 @@ class user_data:
             return None
 
     def get_all_users(self):
+        # function not allowed for system admins to view the users data
+        if Session.user.role.value not in (2, 3):
+            return None
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM users")
             return cursor.fetchall()
         
-    def add_user(self, id, username, hashed_salted_password, first_name, last_name, user_type=Roles.SERVICE_ENGINEER.value):
+    def add_user(self, id, username, hashed_salted_password, first_name, last_name, user_to_add_type=Roles.SERVICE_ENGINEER.value):
+        # system and/or system admin
         if id in ["", None]: id = str(uuid.uuid4())
-        # if user_type > 1 and Session.user.role.value != 3:
-        #     return None
+        # can't add super admins, and system admins can't add other system admins
+        if user_to_add_type >= Session.user.role.value:
+            return None
         # ^ not necessary since the add system admin method is only accessible by a super admin through the presentation layer anyway
         with self.db.connect() as conn:
             cursor = conn.cursor()
@@ -40,38 +46,48 @@ class user_data:
                 cursor.execute('''
                     INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
                     VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                ''', (id, username.lower(), hashed_salted_password, user_type, first_name, last_name, True))
+                ''', (id, username.lower(), hashed_salted_password, user_to_add_type, first_name, last_name, True))
                 return True
             except Exception:
                 return False
             
-    def add_serviceEngineer(self, id, username, hashed_salted_password, first_name, last_name):
-        if id in ["", None]: id = str(uuid.uuid4())
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            try:
-                cursor.execute('''
-                    INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
-                    VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                ''', (id, username.lower(), hashed_salted_password, Roles.SERVICE_ENGINEER.value, first_name, last_name, False))
-                return True
-            except Exception:
-                return False
+    # def add_serviceEngineer(self, id, username, hashed_salted_password, first_name, last_name):
+    #     if id in ["", None]: id = str(uuid.uuid4())
+    #     if Session.user.role.value not in (2, 3):
+    #         return None
+    #     with self.db.connect() as conn:
+    #         cursor = conn.cursor()
+    #         try:
+    #             cursor.execute('''
+    #                 INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
+    #                 VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
+    #             ''', (id, username.lower(), hashed_salted_password, Roles.SERVICE_ENGINEER.value, first_name, last_name, False))
+    #             return True
+    #         except Exception:
+    #             return False
             
-    def add_systemAdmin(self, id, username, hashed_salted_password, first_name, last_name):
-        if id in ["", None]: id = str(uuid.uuid4())
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            try:
-                cursor.execute('''
-                    INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
-                    VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                ''', (id, username.lower(), hashed_salted_password, Roles.SYSTEM_ADMINISTRATOR.value, first_name, last_name, False))
-                return True
-            except Exception:
-                return False
+    # def add_systemAdmin(self, id, username, hashed_salted_password, first_name, last_name):
+    #     if id in ["", None]: id = str(uuid.uuid4())
+    #     with self.db.connect() as conn:
+    #         cursor = conn.cursor()
+    #         try:
+    #             cursor.execute('''
+    #                 INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
+    #                 VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
+    #             ''', (id, username.lower(), hashed_salted_password, Roles.SYSTEM_ADMINISTRATOR.value, first_name, last_name, False))
+    #             return True
+    #         except Exception:
+    #             return False
 
-    def delete_user(self, username_or_id):
+    def delete_user(self, username_or_id, user_to_delete_type):
+        if Session.user.role.value == 1: 
+            return None
+        elif Session.user.role.value == 2:
+            # system admins can delete own account, but no other admins
+            if username_or_id != Session.user.user_id:
+                return None
+            if user_to_delete_type > 2:
+                return None
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
@@ -89,12 +105,17 @@ class user_data:
                 cursor = conn.cursor()
                 # Fetch current values
                 cursor.execute('''
-                    SELECT username, first_name, last_name FROM users WHERE username = ?
+                    SELECT username, first_name, last_name, role FROM users WHERE username = ?
                 ''', (original_username,))
                 row = cursor.fetchone()
                 if not row:
                     print("User not found.")
                     return False
+                
+                # Cannot update a user with a higher rank
+                if row[-1] > Session.user.value:
+                    return
+
                 current_username, current_first_name, current_last_name = row
                 # Use current value if input is blank
                 username = username if username.strip() != "" else current_username
@@ -110,6 +131,8 @@ class user_data:
             return False
 
     def update_user_password(self, username_or_id, hashed_salted_password):
+        if Session.user.role.value == 1:
+            return None
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()

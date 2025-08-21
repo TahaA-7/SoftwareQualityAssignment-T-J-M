@@ -2,6 +2,8 @@ from access_layer.db.db_context import DBContext
 
 from DataModels.ScooterModel import Scooter
 
+from presentation_layer.utils.Session import Session
+
 class scooter_data:
     def __init__(self):
         self.db = DBContext()
@@ -33,31 +35,49 @@ class scooter_data:
             return cursor.fetchall()
 
     def add_scooter(self, scooter):
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                INSERT INTO scooters (
-                    serial_number, in_service_date, brand, model, top_speed, battery_capacity,
-                    state_of_charge, target_soc_min, target_soc_max, latitude, longitude,
-                    out_of_service, mileage, last_maintenance_date
-                ) VALUES (?, datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ''', (
-                scooter.serial_number, scooter.brand, scooter.model,
-                scooter.top_speed, scooter.battery_capacity,
-                scooter.state_of_charge, scooter.target_soc_min,
-                scooter.target_soc_max, scooter.latitude, scooter.longitude,
-                int(scooter.out_of_service), scooter.mileage,
-                scooter.last_maintenance_date
-            ))
-            return cursor.rowcount > 0
+        # Function not accessible for service engineers
+        if Session.user.role.value not in (2, 3):
+            return None
+
+        try:
+            with self.db.connect() as conn:
+                cursor = conn.cursor()
+                cursor.execute('''
+                    INSERT INTO scooters (
+                        serial_number, in_service_date, brand, model, top_speed, battery_capacity,
+                        state_of_charge, target_soc_min, target_soc_max, latitude, longitude,
+                        out_of_service, mileage, last_maintenance_date
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    scooter.serial_number, scooter.in_service_date, scooter.brand, scooter.model,
+                    scooter.top_speed, scooter.battery_capacity,
+                    scooter.state_of_charge, scooter.target_soc_min,
+                    scooter.target_soc_max, scooter.latitude, scooter.longitude,
+                    int(scooter.out_of_service), scooter.mileage,
+                    scooter.last_maintenance_date
+                ))
+                return cursor.rowcount > 0
+        except Exception:
+            return None
 
     def delete_scooter(self, serial_number):
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM scooters WHERE serial_number = ?", (serial_number,))
+        # Function not accessible for service engineers
+        if Session.user.role.valuenot in (2, 3):
+            return None
+
+        try:
+            with self.db.connect() as conn:
+                cursor = conn.cursor()
+                cursor.execute("DELETE FROM scooters WHERE serial_number = ?", (serial_number,))
+                return True
+        except Exception:
+            return None
 
     def update_scooter(self, original_serial, serial, brand, model, top_speed, battery, soc, soc_range, soc_min, soc_max,
                     lat, lon, out_of_service_status, mileage, last_maint_date):
+        # For the service engineer there exists a seperate update function
+        if Session.user.role.value not in (2, 3):
+            return None
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
@@ -101,43 +121,46 @@ class scooter_data:
     def update_scooter_attributes(
             self, scooter_obj: tuple, SoC=None, target_SoC_min=None, target_SoC_max=None, lat=None, lon=None, 
             out_of_service_status=None, mileage=None, last_maintenance=None):
-        with self.db.connect() as conn:
-            cursor = conn.cursor()
-            updates = []
-            params = []
+        try:
+            with self.db.connect() as conn:
+                cursor = conn.cursor()
+                updates = []
+                params = []
 
-            if SoC is not None:
-                updates.append("state_of_charge = ?")
-                params.append(SoC)
-            if target_SoC_min is not None:
-                updates.append("target_soc_min = ?")
-                params.append(target_SoC_min)
-            if target_SoC_max is not None:
-                updates.append("target_soc_max = ?")
-                params.append(target_SoC_max)
-            if lat is not None:
-                updates.append("latitude = ?")
-                params.append(lat)
-            if lon is not None:
-                updates.append("longitude = ?")
-                params.append(lon)
-            if out_of_service_status is not None:
-                updates.append("out_of_service = ?")
-                params.append(out_of_service_status)
-            if mileage is not None:
-                updates.append("mileage = ?")
-                params.append(mileage)
-            if last_maintenance is not None:
-                updates.append("last_maintenance_date = ?")
-                params.append(last_maintenance)
+                if SoC is not None:
+                    updates.append("state_of_charge = ?")
+                    params.append(SoC)
+                if target_SoC_min is not None:
+                    updates.append("target_soc_min = ?")
+                    params.append(target_SoC_min)
+                if target_SoC_max is not None:
+                    updates.append("target_soc_max = ?")
+                    params.append(target_SoC_max)
+                if lat is not None:
+                    updates.append("latitude = ?")
+                    params.append(lat)
+                if lon is not None:
+                    updates.append("longitude = ?")
+                    params.append(lon)
+                if out_of_service_status is not None:
+                    updates.append("out_of_service = ?")
+                    params.append(out_of_service_status)
+                if mileage is not None:
+                    updates.append("mileage = ?")
+                    params.append(mileage)
+                if last_maintenance is not None:
+                    updates.append("last_maintenance_date = ?")
+                    params.append(last_maintenance)
 
-            if not updates:
-                return  # Nothing to update
+                if not updates:
+                    return  # Nothing to update
 
-            query = f"UPDATE scooters SET {', '.join(updates)} WHERE brand = ? AND model = ?"
-            params.append(scooter_obj[2])
-            params.append(scooter_obj[3])
-            cursor.execute(query, params)
-            conn.commit()
+                query = f"UPDATE scooters SET {', '.join(updates)} WHERE brand = ? AND model = ?"
+                params.append(scooter_obj[2])
+                params.append(scooter_obj[3])
+                cursor.execute(query, params)
+                conn.commit()
 
-            return cursor.rowcount > 0
+                return cursor.rowcount > 0
+        except Exception:
+            return False 

@@ -1,16 +1,26 @@
 from access_layer.db.db_context import DBContext
 
+from presentation_layer.utils.Session import Session
+
 class traveller_data:
     def __init__(self):
         self.db = DBContext()
 
     def get_travellers(self):
+        # Function not accessible for service engineers
+        if Session.user.role.value not in (2, 3):
+            return None
+
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("""SELECT * FROM travellers""")
             return cursor.fetchall()
 
     def search_traveller(self, keyword):
+        # Function not accessible for service engineers
+        if Session.user.role.value not in (2, 3):
+            return None
+
         with self.db.connect() as conn:
             cursor = conn.cursor()
             keyword = f"%{keyword.lower()}%"
@@ -26,6 +36,10 @@ class traveller_data:
             return cursor.fetchall()
         
     def add_traveller(self, traveller):
+        # Function not accessible for service engineers
+        if Session.user.role.value not in (2, 3):
+            return False
+
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''
@@ -43,11 +57,19 @@ class traveller_data:
             return cursor.rowcount > 0
 
     def delete_traveller(self, customer_id):
+        # Function not accessible for service engineers
+        if Session.user.role.value not in (2, 3):
+            return None
+
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM travellers WHERE customer_id = ?", (customer_id,))
 
     def update_traveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num):
+        # Function not accessible for service engineers
+        if Session.user.role.value not in (2, 3):
+            return None
+
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
@@ -57,6 +79,7 @@ class traveller_data:
                     print("Traveller not found")
                     return False
                 # curr as in current
+                # some `curr_id` and `curr_registration_date` unused but must still be defined here to make the function work + consistency
                 (curr_id, curr_registration_date, curr_fname, curr_lname, curr_bday, curr_gender,
                 curr_street, curr_house_num, curr_zip, curr_city,
                 curr_email, curr_phone, curr_license_num) = row

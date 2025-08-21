@@ -123,7 +123,7 @@ class AddDataService():
             soc_range = ";".join((soc_min, soc_max))
             # location = ";".join((str(lat), str(lon)))
 
-            scooter = Scooter(serial, model, brand, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint, in_service_date)
+            scooter = Scooter(serial, in_service_date, brand, model, top_speed, battery, soc, soc_min, soc_max, lat, lon, out_of_service, mileage, last_maint)
             return self.scooter_.add_scooter(scooter)
         return None
 

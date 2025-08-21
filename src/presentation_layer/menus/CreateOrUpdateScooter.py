@@ -81,11 +81,12 @@ f"""Please select a field and set it to a (new) value
 
 
     def _handle_register(self):
-        self.last_maint_date = datetime.time()
+        if not hasattr(self, 'last_maint_date') or not self.last_maint_date:
+            self.last_maint_date = datetime.date.today().strftime("%Y-%m-%d")
         if "" not in self._get_scooter_fields_dict().items():
             add_data_service_obj = AddDataService()
             added_scooter = add_data_service_obj.addScooter(self.serial, self.brand, self.model, 
-                self.top_speed, self.battery, self.soc, self.soc_range, self.soc_min, self.soc_max,
+                self.top_speed, self.battery, self.soc, self.soc_min, self.soc_max,
                 self.lat, self.lon, self.out_of_service_status, self.mileage, self.last_maint_date)
             if added_scooter:
                 Logger.log(self.customer_id, "Registered new scooter")

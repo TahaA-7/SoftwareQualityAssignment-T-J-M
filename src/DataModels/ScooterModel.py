@@ -2,10 +2,10 @@ from datetime import datetime
 
 
 class Scooter:
-    def __init__(self, serial_number, brand, model, top_speed,
+    def __init__(self, serial_number, in_service_date, brand, model, top_speed,
                  battery_capacity, state_of_charge, target_soc_min,
                  target_soc_max, latitude, longitude, out_of_service,
-                 mileage, last_maintenance_date, in_service_date):
+                 mileage, last_maintenance_date):
         
         self.serial_number = serial_number
         if in_service_date == None:
