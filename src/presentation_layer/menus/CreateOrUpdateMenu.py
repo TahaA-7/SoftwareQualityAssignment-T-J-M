@@ -227,24 +227,28 @@ class CreateOrUpdateMenu:
 
     # USERS MAINLY
     def _handle_username(self):
+        flag_username = False
         username_input = input("""Please enter your username:
     ○ must be unique and have a length of at least 8 characters
     ○ must be no longer than 10 characters
     ○ must be started with a letter or underscores (_)
     ○ can contain letters (a-z), numbers (0-9), underscores (_), apostrophes ('), and periods (,)
     ○ no distinction between lowercase and uppercase letters (case-insensitive):\n""")
-        if username_input in ("", " "): return
-        if StringValidations.is_valid_username(username_input) == False:
-            print("Invalid username")
-            time.sleep(0.75)
-        else:
+        if username_input in ("", " ") or username_input.isspace(): return
+        if StringValidations.is_valid_username(username_input):
+            flag_username = True
+        if flag_username:
+            self.username = username_input
             print("Username set succesfully")
             time.sleep(0.75)
-            self.username = username_input
+        else:
+            print("Invalid username")
+            time.sleep(0.75)
         return self.username
 
 
     def _handle_password(self):
+        flag_password = False
         print(r"""Password:
     ○ must have a length of at least 12 characters
     ○ must be no longer than 30 characters
@@ -254,47 +258,55 @@ class CreateOrUpdateMenu:
     and one special character:""")
         password_input = maskpass.askpass(prompt="", mask="*")
         confirm_password_input = maskpass.askpass(prompt="Please confirm your password: ", mask="*")
-        if StringValidations.is_valid_password(password_input) == False or password_input != confirm_password_input:
-            print("Invalid password")
-            time.sleep(0.75)
-        else:
+        if StringValidations.is_valid_password(password_input) and password_input == confirm_password_input:
+            flag_password == True
+        if flag_password:
+            self.password = password_input
             print("Password set succesfully")
             time.sleep(0.75)
-            self.password = password_input
+        else:
+            print("Invalid password")
+            time.sleep(0.75)
         return self.password
 
 
     def _handle_first_name_submit(self, emp_or_cust):
+        flag_fname = False
         name_input = input("Please enter a first name: ")
         if name_input in ("", " "):
             return
-        if StringValidations.is_valid_first_or_last_name(name_input) == False:
-            print("Invalid first name")
-            time.sleep(0.75)
-        else:
-            print("First name set succesfully")
-            time.sleep(0.75)
+        if StringValidations.is_valid_first_or_last_name(name_input):
+            flag_fname = True
+        if flag_fname:
             if emp_or_cust == "emp":
                 self.u_fname = name_input
             else:
                 self.c_fname = name_input
+            print("First name set succesfully")
+            time.sleep(0.75)
+        else:
+            print("Invalid first name")
+            time.sleep(0.75)
         return self.u_fname if emp_or_cust == "emp" else self.c_fname
 
 
     def _handle_last_name_submit(self, emp_or_cust):
+        flag_lname = False
         name_input = input("Please enter a last name: ")
         if name_input in ("", " "):
             return
-        if StringValidations.is_valid_first_or_last_name(name_input) == False:
-            print("Invalid last name")
-            time.sleep(0.75)
-        else:
-            print("Last name set succesfully")
-            time.sleep(0.75)
+        if StringValidations.is_valid_first_or_last_name(name_input):
+            flag_lname = True
+        if flag_lname:
             if emp_or_cust == "emp":
                 self.u_lname = name_input
             else:
                 self.c_lname = name_input
+            print("Last name set succesfully")
+            time.sleep(0.75)
+        else:
+            print("Invalid last name")
+            time.sleep(0.75)
         return self.u_lname if emp_or_cust == "emp" else self.c_lname
 
 
@@ -304,90 +316,151 @@ class CreateOrUpdateMenu:
     # def handle_trav_last_name(self):
     #     pass
     def _handle_trav_birthday(self):
+        flag_bday = False
         birthday = input("Please enter a birthday (YYYY-MM-DD): ").strip()
-        self.bday = birthday if datetime.datetime.strptime(birthday, "%Y-%m-%d") else ""
+        if datetime.datetime.strptime(birthday, "%Y-%m-%d"):
+            flag_bday = True
+        if flag_bday: self.bday = birthday
     def _handle_trav_gender(self):
+        flag_trav_gender = False
         gender = input("Please enter a gender (M/F/O): ").strip()
-        self.gender = gender if gender.upper() in ("M", "F", "O", "MALE", "FEMALE", "OTHER") else ""
+        if gender.upper() in ("M", "F", "O", "MALE", "FEMALE", "OTHER"):
+            flag_trav_gender = True
+        if flag_trav_gender: self.gender = gender
     def _handle_trav_street(self):
+        flag_street = False
         street = input("Please enter a street name: ").strip()
-        self.street = street
+        if len(street) <= 1 or len(street) > 100: return
+        if street[0].isupper() and all(c in set(string.ascii_letters + string.digits) for c in street[1:]):
+            flag_street = True
+        if flag_street: self.street = street
     def _handle_trav_house_number(self):
-        house_numer = input("Please enter a house number: ").strip()
-        self.house_number = house_numer if house_numer.isdigit() else ""
+        flag_housenum = False
+        house_number = input("Please enter a house number: ").strip()
+        if house_number.isdigit() and len(house_number) < 20:
+            flag_housenum = True
+        if flag_housenum: self.house_number = house_number
     def _handle_trav_zip_code(self):
+        flag_zip_code = False
         zip_code = input("Please enter a zip code (DDDDXX): ").strip().upper()
         if len(zip_code) == 6:
-            self.zip = zip_code if zip_code[0:3].isdigit() and zip_code[4:5].isalpha() else ""
-        else:
-            self.zip = ""
+           if zip_code[0:3].isdigit() and zip_code[4:5].isalpha():
+               flag_zip_code = True
+        if flag_zip_code: self.zip = zip_code
         # self.zip = zip_code if len(zip_code) < 12 else ""
     def _handle_trav_city(self):
+        flag_trav_city = False
         city_char = self._select_city()
+        city_input = ""
         if city_char == 'O':
             city_input = input("Please enter a city name: ")
-            self.city = city_input if city_input.isalpha() else ""
+            if city_input.isalpha() and len(city_input) > 1 and len(city_input) < 200:
+                flag_trav_city = True
         else:
-            self.city = self.city_names_dict[city_char] if city_char in self.city_names_dict.keys() else ""
+            if city_char in self.city_names_dict.keys():
+                flag_trav_city = True
+            # self.city = self.city_names_dict[city_char] if city_char in self.city_names_dict.keys() else ""
+        if flag_trav_city: self.city = self.city_names_dict[city_char] if city_char in self.city_names_dict.keys() else city_input
     def _handle_trav_email(self):
+        email_flag = False
         email = input("Please enter an email: ").strip()
-        self.c_email = email if StringValidations.is_valid_email(email) else ""
+        if StringValidations.is_valid_email(email):
+            email_flag = True
+        if email_flag: self.c_email = email
     def _handle_trav_phone(self):
+        flag_phone = False
         phone = input("Please enter a phone number (+31-6-DDDDDDDD): ").strip()
         phone = phone.split("-")[-1] if "-" in phone else phone  # On a separate line for readability
-        self.phone = phone if phone.isdigit() and len(phone) == 8 else ""
+        if phone.isdigit() and len(phone) == 8:
+            flag_phone = True
+        if flag_phone: self.phone = phone
     def _handle_license_number(self):
         self.license_number = self._generate_license_number()
 
 
     # SCOOTERS
     def _handle_scooter_serial(self):
+        flag_serial = False
         serial = input("Serial Number: ").strip()
-        self.serial = serial if all(c in self.alnum_dash for c in serial) else ""
+        if all(c in self.alnum_dash for c in serial):
+            flag_serial = True
+        if flag_serial: self.serial = serial
     def _handle_scooter_brand(self):
+        flag_brand = False
         brand = input("Brand: ").strip()
-        self.brand = brand if brand.isalpha() else ""
+        if brand.isalpha() and len(brand) < 100:
+            flag_brand = True
+        if flag_brand: self.brand = brand
     def _handle_scooter_model(self):
+        flag_model = False
         model = input("Model: ").strip()
-        self.model = model if model.isalpha() else ""
+        if model.isalpha() and len(model) < 100:
+            flag_model = True
+        if flag_model: self.model = model
     def _handle_scooter_top_speed(self):
+        flag_top_speed = False
         top_speed = input("Top speed (km/h): ").strip()
-        self.top_speed = top_speed if top_speed.isdigit() else ""
+        if top_speed.isdigit() and len(top_speed) < 4:
+            flag_top_speed = True
+        if flag_top_speed: self.top_speed = top_speed
     def _handle_scooter_battery(self):
+        flag_battery = False
         battery = input("Battery capacity (Wh): ").strip()
-        self.battery = battery if battery.isdigit() else ""
+        if battery.isdigit() and len(battery) < 4:
+            flag_battery = True
+        if flag_battery: self.battery = battery
     def _handle_scooter_state_of_charge(self):
+        flag_soc = False
         soc = input("(SoC) State of charge (%): ").strip()
-        self.soc = soc.replace("%", "") if soc.replace("%", "").isdigit() else ""
+        if soc.replace("%", "").isdigit() and len(soc) < 4:
+            flag_soc = True
+        if flag_soc: self.soc = soc
     def _handle_scooter_soc_target_range(self):
         try:
+            flag_soc_range = False
+            soc_min = soc_max = ""
             soc_range = input("Min SoC - Max SoC, split with `-` (10-20): ").strip()
             # self.soc_range = soc_range.replace(";", "") if soc_range.count(";") == 1 and soc_range.replace(";", "").isdigit()
             if soc_range.count("-") == 1:
                 soc_min, soc_max = soc_range.split("-")
                 if soc_min.isnumeric() and soc_max.isnumeric():
-                    self.soc_min = soc_min
-                    self.soc_max = soc_max
+                    flag_soc_range = True
+            if flag_soc_range:
+                self.soc_min = soc_min
+                self.soc_max = soc_max
         except Exception:
             print("Invalid input. Format should be: `10-20`")
     def _handle_scooter_location(self):
         try:
+            flag_loc = False
             location = input("Min SoC - Max SoC, split with `;` (52.3676;4.9041): ").strip().replace(",", ".")
             # self.location = location.replace(";", "") if location.count(";") == 1 and re.fullmatch(r'\d+(\.\d+)?', location.replace(";", ""))
             if location.count(";") == 1:
                 lat_str, lon_str = location.split(";")
                 lat = float(lat_str.strip())
                 lon = float(lon_str.strip())
+                flag_loc = True
+            if flag_loc:
                 self.lat = lat
                 self.lon = lon
         except Exception:
             print("Invalid input. Format should be: `52.3676;4.9041`")
     def _handle_scooter_out_of_service_status(self):
-        out_of_service = input("Is out of service enter details or `n/N` to leave empty ").strip()
-        self.out_of_service_status = out_of_service if out_of_service not in ('n', 'N', '') else ""
+        flag_serv_status = False
+        out_of_service = input("Is out of service? Enter details, else `n/N` to leave empty ").strip()
+        if len(out_of_service) > 0:
+            if all(c in set(string.ascii_letters + string.digits + (",", ".", ":", "-")) for c in out_of_service) & len(out_of_service) < 401:
+                flag_serv_status = True
+        else:
+            flag_serv_status = True
+        if out_of_service in ('n', 'N', ''): out_of_service = ""
+        if flag_serv_status: self.out_of_service_status = out_of_service
     def _handle_scooter_mileage(self):
+        flag_mileage = False
         mileage = input("Mileage (km): ").strip()
-        self.mileage = mileage if mileage.replace(".", "").isnumeric() else ""
+        if mileage.replace(".", "").isnumeric() and len(mileage) < 100:
+            flag_mileage = True
+        if flag_mileage: self.mileage = mileage
 
 
     def _select_city(self):

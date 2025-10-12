@@ -13,7 +13,7 @@ from presentation_layer.utils.Session import Session
 
 from datetime import datetime
 
-import hashlib
+import string
 
 class UpdateDataService:
     def __init__(self):
@@ -79,19 +79,47 @@ class UpdateDataService:
         return False
  
     def updateScooterAttributes(self, scooter_obj: Scooter, SoC, target_SoC, location, out_of_service_status, mileage, last_maintenance):
-        SoC = SoC if SoC != "" else None
+        flag_soc = False
+        if SoC.replace("%", "").isdigit() and len(SoC) < 4:
+            flag_soc = True
+        if not flag_soc: SoC = None
+
+        flag_soc_range = False
         target_SoC_min = target_SoC_max = None
-        if target_SoC.count("---") == 1:
-            target_SoC_min, target_SoC_max = target_SoC.split("---")
+        try:
+            # self.soc_range = soc_range.replace(";", "") if soc_range.count(";") == 1 and soc_range.replace(";", "").isdigit()
+            if target_SoC.count("-") == 1:
+                target_SoC_min, target_SoC_max = target_SoC.split("-")
+                if target_SoC_min.isnumeric() and target_SoC_max.isnumeric():
+                    flag_soc_range = True
+        except Exception:
+            print("Invalid input. Format should be: `10-20`")
+        if not flag_soc_range:
+            target_SoC_min = target_SoC_max = None
+
+        flag_lat = flag_lon = False
         lat = lon = None
         if location.count("---") == 1:
+            flag_lat = flag_lon = True
             lat, lon = location.split("---")
-        out_of_service_status = out_of_service_status if out_of_service_status != "" else None
-        mileage = mileage if mileage != "" else None
+        if not flag_lat or not flag_lon:
+            lat = lon = None
+
+        flag_serv_status = False
+        if len(out_of_service_status) > 0:
+            if all(c in set(string.ascii_letters + string.digits + (",", ".", ":", "-")) for c in out_of_service_status) & len(out_of_service_status) < 401:
+                flag_serv_status = True
+        if not flag_serv_status: out_of_service_status = None
+
+        flag_mileage = False
+        if mileage.replace(".", "").isnumeric() and len(mileage) < 100:
+            flag_mileage = True
+        if not flag_mileage: mileage = None
+
+        flag_last_maint = False
         if last_maintenance not in (None, "", " "):
-            last_maintenance = last_maintenance if datetime.strptime(last_maintenance, "%Y-%m-%d").date() else None
-        else:
-            last_maintenance = None
+            if datetime.strptime(last_maintenance, "%Y-%m-%d").date(): flag_last_maint = True
+        if not flag_last_maint: last_maintenance = None
 
         updated_scooter = self.scooter_.update_scooter_attributes(scooter_obj, SoC, 
             target_SoC_min, target_SoC_max, lat, lon, out_of_service_status, mileage, last_maintenance)

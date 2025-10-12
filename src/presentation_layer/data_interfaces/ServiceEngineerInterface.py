@@ -67,6 +67,8 @@ f"""What do you want to do?:
 
     @classmethod
     def update_scooter_attributes(cls):
+        if Session.user.role.value not in (1,2,3):
+            return None
         updatedataservice_obj = UpdateDataService()
         getdataservice_obj = GetDataService()
         serial = input(

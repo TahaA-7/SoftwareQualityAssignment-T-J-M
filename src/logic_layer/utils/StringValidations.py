@@ -27,11 +27,13 @@ class StringValidations:
 
     @classmethod
     def is_valid_email(cls, email: str) -> bool:
-        if cls.__check_regex("email", email) == False:
-            return False
-        elif cls.__length_and_characters_check("email", email) == False:
-            return False
-        return True
+        email_regex_flag = False
+        email_flag = False
+        if cls.__check_regex("email", email):
+            email_regex_flag = True
+        elif cls.__length_and_characters_check("email", email):
+            email_flag = True
+        return bool(email_regex_flag & email_flag)
 
     @classmethod
     def is_valid_password(cls, password: str) -> bool:
@@ -45,7 +47,7 @@ class StringValidations:
 
     @classmethod
     def __length_and_characters_check(cls, type, str: str):
-        validations_dict = {"init": True}
+        validations_dict = {"init": False}
         try:
             if type == "username":
                 username = str
