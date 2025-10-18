@@ -354,7 +354,7 @@ class CreateOrUpdateMenu:
         city_input = ""
         if city_char == 'O':
             city_input = input("Please enter a city name: ")
-            if city_input.isalpha() and len(city_input) > 1 and len(city_input) < 200:
+            if city_input.isalpha() and 0 < len(city_input) < 200:
                 flag_trav_city = True
         else:
             if city_char in self.city_names_dict.keys():
@@ -370,10 +370,11 @@ class CreateOrUpdateMenu:
     def _handle_trav_phone(self):
         flag_phone = False
         phone = input("Please enter a phone number (+31-6-DDDDDDDD): ").strip()
-        phone = phone.split("-")[-1] if "-" in phone else phone  # On a separate line for readability
+        # phone = phone.split("-")[1] if "-" in phone.count("-") == 2 else phone  # On a separate line for readability
         if phone.isdigit() and len(phone) == 8:
             flag_phone = True
-        if flag_phone: self.phone = phone
+        else: print("Error: only fill in the `DDDDDDDD` part with a fixed length of 8 digits")
+        if flag_phone: self.phone = "+31-6-" + phone
     def _handle_license_number(self):
         self.license_number = self._generate_license_number()
 
@@ -388,52 +389,53 @@ class CreateOrUpdateMenu:
     def _handle_scooter_brand(self):
         flag_brand = False
         brand = input("Brand: ").strip()
-        if brand.isalpha() and len(brand) < 100:
+        if brand.isalpha() and 1 < len(brand) < 100:
             flag_brand = True
         if flag_brand: self.brand = brand
     def _handle_scooter_model(self):
         flag_model = False
         model = input("Model: ").strip()
-        if model.isalpha() and len(model) < 100:
+        if model.isalpha() and 1 < len(model) < 100:
             flag_model = True
         if flag_model: self.model = model
     def _handle_scooter_top_speed(self):
         flag_top_speed = False
         top_speed = input("Top speed (km/h): ").strip()
-        if top_speed.isdigit() and len(top_speed) < 4:
+        if top_speed.isdigit() and 5 < int(top_speed) < 101:
             flag_top_speed = True
         if flag_top_speed: self.top_speed = top_speed
     def _handle_scooter_battery(self):
         flag_battery = False
         battery = input("Battery capacity (Wh): ").strip()
-        if battery.isdigit() and len(battery) < 4:
+        if battery.isdigit() and -1 < int(battery) < 101:  # even though .isdigit() results false when a `-` is included ¯\_(ツ)_/¯
             flag_battery = True
         if flag_battery: self.battery = battery
     def _handle_scooter_state_of_charge(self):
         flag_soc = False
         soc = input("(SoC) State of charge (%): ").strip()
-        if soc.replace("%", "").isdigit() and len(soc) < 4:
+        if soc.replace("%", "").isdigit() and -1 < int(soc) < 101:
             flag_soc = True
         if flag_soc: self.soc = soc
     def _handle_scooter_soc_target_range(self):
         try:
             flag_soc_range = False
             soc_min = soc_max = ""
-            soc_range = input("Min SoC - Max SoC, split with `-` (10-20): ").strip()
+            soc_range = input("Min SoC - Max SoC, split with `-` (10-20): ").strip() #.replace("%", "")
             # self.soc_range = soc_range.replace(";", "") if soc_range.count(";") == 1 and soc_range.replace(";", "").isdigit()
             if soc_range.count("-") == 1:
                 soc_min, soc_max = soc_range.split("-")
-                if soc_min.isnumeric() and soc_max.isnumeric():
-                    flag_soc_range = True
+                if soc_min.isdigit() and soc_max.isdigit():
+                    if int(soc_min) < int(soc_max) and -1 < int(soc_min) < 101 and -1 < int(soc_max) < 101:
+                        flag_soc_range = True
             if flag_soc_range:
                 self.soc_min = soc_min
                 self.soc_max = soc_max
         except Exception:
-            print("Invalid input. Format should be: `10-20`")
+            print("Invalid input. Format should be: `10-20` without percentage (`%`) signs")
     def _handle_scooter_location(self):
         try:
             flag_loc = False
-            location = input("Min SoC - Max SoC, split with `;` (52.3676;4.9041): ").strip().replace(",", ".")
+            location = input("Min SoC - Max SoC, split with `;` (52.3676;4.9041): ").strip() #.replace(",", ".")
             # self.location = location.replace(";", "") if location.count(";") == 1 and re.fullmatch(r'\d+(\.\d+)?', location.replace(";", ""))
             if location.count(";") == 1:
                 lat_str, lon_str = location.split(";")
@@ -444,7 +446,7 @@ class CreateOrUpdateMenu:
                 self.lat = lat
                 self.lon = lon
         except Exception:
-            print("Invalid input. Format should be: `52.3676;4.9041`")
+            print("Invalid input. Format should be: `52.3676;4.9041` with dots instead of commas")
     def _handle_scooter_out_of_service_status(self):
         flag_serv_status = False
         out_of_service = input("Is out of service? Enter details, else `n/N` to leave empty ").strip()
@@ -458,8 +460,9 @@ class CreateOrUpdateMenu:
     def _handle_scooter_mileage(self):
         flag_mileage = False
         mileage = input("Mileage (km): ").strip()
-        if mileage.replace(".", "").isnumeric() and len(mileage) < 100:
-            flag_mileage = True
+        mileage_dum = mileage.replace(".", "")
+        if mileage_dum.isnumeric() and len(mileage_dum) < 100:
+            if float(mileage_dum) > 0: flag_mileage = True
         if flag_mileage: self.mileage = mileage
 
 
