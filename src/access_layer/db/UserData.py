@@ -105,9 +105,14 @@ class user_data:
                 cursor = conn.cursor()
                 # Fetch current values
                 cursor.execute('''
-                    SELECT username, first_name, last_name, role FROM users WHERE username = ?
+                    SELECT username, first_name, last_name, role FROM users WHERE id = ?
                 ''', (original_username,))
                 row = cursor.fetchone()
+                if not row:
+                    cursor.execute('''
+                        SELECT username, first_name, last_name, role FROM users WHERE username = ?
+                    ''', (original_username,))
+                    row = cursor.fetchone()  
                 if not row:
                     print("User not found.")
                     return False
@@ -134,6 +139,25 @@ class user_data:
         if Session.user.role.value == 1:
             return None
         try:
+            with self.db.connect() as conn:
+                cursor = conn.cursor()
+                # Fetch current values
+                cursor.execute('''
+                    SELECT username, role FROM users WHERE id = ?
+                ''', (username_or_id,))
+                row = cursor.fetchone()
+                if not row:
+                    cursor.execute('''
+                        SELECT username, role FROM users WHERE username = ?
+                    ''', (username_or_id,))
+                    row = cursor.fetchone()
+                if not row:
+                    print("User not found.")
+                    return False
+                
+                if row[-1] > Session.user.role.value:
+                    return
+
             with self.db.connect() as conn:
                 cursor = conn.cursor()
                 cursor.execute('''
