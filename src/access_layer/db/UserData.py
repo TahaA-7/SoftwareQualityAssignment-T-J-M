@@ -113,7 +113,7 @@ class user_data:
                     return False
                 
                 # Cannot update a user with a higher rank
-                if row[-1] > Session.user.value:
+                if row[-1] > Session.user.role.value:
                     return
 
                 current_username, current_first_name, current_last_name = row
