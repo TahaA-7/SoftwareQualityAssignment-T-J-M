@@ -259,7 +259,7 @@ class CreateOrUpdateMenu:
         password_input = maskpass.askpass(prompt="", mask="*")
         confirm_password_input = maskpass.askpass(prompt="Please confirm your password: ", mask="*")
         if StringValidations.is_valid_password(password_input) and password_input == confirm_password_input:
-            flag_password == True
+            flag_password = True
         if flag_password:
             self.password = password_input
             print("Password set succesfully")
