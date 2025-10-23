@@ -12,6 +12,10 @@ class scooter_data:
     # def get_scooters()
 
     def get_scooter_single(self, original_serial):
+        # Function accessible for service engineers, system admin and super admin
+        if Session.user.role.value not in (1, 2, 3):
+            return None
+        
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''
@@ -22,6 +26,10 @@ class scooter_data:
             return cursor.fetchall()
 
     def search_scooter(self, keyword):
+        # Function accessible for service engineers, system admin and super admin
+        if Session.user.role.value not in (1, 2, 3):
+            return None
+        
         with self.db.connect() as conn:
             cursor = conn.cursor()
             keyword = f"%{keyword.lower()}%"
@@ -62,7 +70,7 @@ class scooter_data:
 
     def delete_scooter(self, serial_number):
         # Function not accessible for service engineers
-        if Session.user.role.valuenot in (2, 3):
+        if Session.user.role.value not in (2, 3):
             return None
 
         try:
@@ -121,6 +129,9 @@ class scooter_data:
     def update_scooter_attributes(
             self, scooter_obj: tuple, SoC=None, target_SoC_min=None, target_SoC_max=None, lat=None, lon=None, 
             out_of_service_status=None, mileage=None, last_maintenance=None):
+        # Function accessible for service engineers, system admin and super admin
+        if Session.user.role.value not in (1, 2, 3):
+            return None
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()

@@ -1,10 +1,14 @@
 from access_layer.db.db_context import DBContext
+from presentation_layer.utils.Session import Session
 
 class log_data:
     def __init__(self):
         self.db = DBContext()
 
     def get_logs(self):
+        # Function accessible for system admin and super admin
+        if Session.user.role.value not in (2, 3):
+            return None
         with self.db.connect() as conn:
             cursor = conn.cursor()
             cursor.execute('''
