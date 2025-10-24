@@ -63,6 +63,9 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
             print("\n[0] Exit")
 
             choice = input("Enter your choice: ")
+            
+            if len(choice) > 5:
+                continue
 
             match choice:
                 # Service Engineer functionality
@@ -247,6 +250,12 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
         '''
         getdataservice_obj = GetDataService()
         user_input = input("Please enter a (part of a) brand or model name to search by: ")
+        flag_brand_model = False
+        if all(c in cls.alnum_space for c in user_input):
+            flag_brand_model = True
+        if not flag_brand_model:
+            print("Error: only letters, digits and spaces allowed")
+            return
         scooters = getdataservice_obj.search_scooters(user_input)
         for scooter in scooters:
             print(scooter)

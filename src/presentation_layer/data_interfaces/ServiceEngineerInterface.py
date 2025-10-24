@@ -11,9 +11,13 @@ from presentation_layer.utils.Session import Session
 from presentation_layer.menus.LoginMenu import LoginMenu
 
 import maskpass
+import string
 
 
 class ServiceEngineerInterface():
+    alnum_dash = set(string.ascii_letters + string.digits + "-")
+    alnum_space = set(string.ascii_letters + string.digits + " ")
+
     get_data_methods = GetDataService()
     update_data_methods = UpdateDataService()
     # service engineer is standard user
@@ -34,6 +38,8 @@ f"""What do you want to do?:
 [3] search a scooter
 
 [L] logout\n"""))
+            if len(user_choice) > 5:
+                continue
             match user_choice:
                 case '1':
                     cls.update_own_password()
@@ -71,11 +77,17 @@ f"""What do you want to do?:
             return None
         updatedataservice_obj = UpdateDataService()
         getdataservice_obj = GetDataService()
+        flag_serial = False
         serial = input(
             "Please enter the serial number of the scooter to update: ")
+        if all(c in cls.alnum_dash for c in serial) and len(serial) < 101:
+            flag_serial = True
  
-        
-        scooter_obj = getdataservice_obj.get_scooter(serial)
+        if flag_serial:
+            scooter_obj = getdataservice_obj.get_scooter(serial)
+        else:
+            print("Error: wrong format for serial (only allowed: alphabetic characters, digits and dashes `-`)")
+            return
         if scooter_obj != None: # and type(scooter_obj, Scooter)
             state_of_charge_input = input("Please enter new State of Charge or leave empty: ")
             target_rage_SoC_input = input(
@@ -108,6 +120,12 @@ f"""What do you want to do?:
         '''
         getdataservice_obj = GetDataService()
         user_input = input("Please enter a (part of a) brand or model name to search by: ")
+        flag_brand_model = False
+        if all(c in cls.alnum_space for c in user_input):
+            flag_brand_model = True
+        if not flag_brand_model:
+            print("Error: only letters, digits and spaces allowed")
+            return
         scooters = getdataservice_obj.search_scooters(user_input)
         for scooter in scooters:
             print(scooter)

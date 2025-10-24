@@ -4,6 +4,7 @@ from access_layer.db.ScooterData import scooter_data
 from access_layer.db.LogData import log_data
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
+from logic_layer.utils.AuthenticationAttemptsTracker import AuthenticationAttemptsTracker, AttemptsState
 
 from DataModels.ScooterModel import Scooter
 
@@ -37,8 +38,11 @@ class GetDataService:
         # print(self.super_admin_)
         username = username.lower() # because must be case insensitive
         for u in self.super_admin_:
-            if u["username"] == username and u["password"] == password:
-                return u
+            # if u["username"] == username and u["password"] == password:
+            if u["username"] == username:
+                password_attempt = AuthenticationAttemptsTracker.check_password(password, u["password"])
+                if password_attempt == AttemptsState.Correct:
+                    return u
         for u_tuple in self.user_.get_all_users():
             u_obj = dict(zip(user_keys_tuple, u_tuple))
             # print(username + " " + u_obj['username'])

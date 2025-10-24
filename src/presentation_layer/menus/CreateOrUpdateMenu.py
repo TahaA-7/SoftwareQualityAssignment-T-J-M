@@ -221,7 +221,7 @@ class CreateOrUpdateMenu:
         if result:
             print('Updated sucessfully')
         else:
-            print('error: update failed')
+            print('error: update failed due to incorrect details')
         return result
 
 
@@ -383,7 +383,7 @@ class CreateOrUpdateMenu:
     def _handle_scooter_serial(self):
         flag_serial = False
         serial = input("Serial Number: ").strip()
-        if all(c in self.alnum_dash for c in serial):
+        if all(c in self.alnum_dash for c in serial) and len(serial) < 101:
             flag_serial = True
         if flag_serial: self.serial = serial
     def _handle_scooter_brand(self):

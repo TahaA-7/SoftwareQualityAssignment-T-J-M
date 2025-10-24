@@ -62,6 +62,8 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
             choice = input("Enter your choice: ")
 
+            if len(choice) > 5:
+                continue
             match choice:
                 # Service Engineer–level
                 case '1': 
