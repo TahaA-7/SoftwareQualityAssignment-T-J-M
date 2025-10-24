@@ -2,6 +2,8 @@ from access_layer.db.db_context import DBContext
 
 from presentation_layer.utils.Session import Session
 
+from logic_layer.utils.AuthenticationAttemptsTracker import AuthenticationAttemptsTracker
+
 class traveller_data:
     def __init__(self):
         self.db = DBContext()

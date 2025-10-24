@@ -4,6 +4,8 @@ from DataModels.ScooterModel import Scooter
 
 from presentation_layer.utils.Session import Session
 
+from logic_layer.utils.AuthenticationAttemptsTracker import AuthenticationAttemptsTracker
+
 class scooter_data:
     def __init__(self):
         self.db = DBContext()
@@ -14,6 +16,7 @@ class scooter_data:
     def get_scooter_single(self, original_serial):
         # Function accessible for service engineers, system admin and super admin
         if Session.user.role.value not in (1, 2, 3):
+            AuthenticationAttemptsTracker.handle_tresspass()
             return None
         
         with self.db.connect() as conn:
@@ -28,6 +31,7 @@ class scooter_data:
     def search_scooter(self, keyword):
         # Function accessible for service engineers, system admin and super admin
         if Session.user.role.value not in (1, 2, 3):
+            AuthenticationAttemptsTracker.handle_tresspass()
             return None
         
         with self.db.connect() as conn:
@@ -131,6 +135,7 @@ class scooter_data:
             out_of_service_status=None, mileage=None, last_maintenance=None):
         # Function accessible for service engineers, system admin and super admin
         if Session.user.role.value not in (1, 2, 3):
+            AuthenticationAttemptsTracker.handle_tresspass()
             return None
         try:
             with self.db.connect() as conn:

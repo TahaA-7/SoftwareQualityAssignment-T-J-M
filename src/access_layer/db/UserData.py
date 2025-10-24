@@ -2,6 +2,8 @@ from access_layer.db.db_context import DBContext
 from presentation_layer.utils.Roles import Roles
 from presentation_layer.utils.Session import Session
 
+from logic_layer.utils.AuthenticationAttemptsTracker import AuthenticationAttemptsTracker
+
 import uuid
 
 class user_data:
