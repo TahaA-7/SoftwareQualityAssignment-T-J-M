@@ -218,7 +218,7 @@ class CreateOrUpdateMenu:
                 self.battery, self.soc, self.soc_range, self.soc_min, self.soc_max, self.lat, self.lon, self.out_of_service_status,
                 self.mileage, last_maint_date=datetime.date.today())
 
-        if result:
+        if result and result != None:
             print('Updated sucessfully')
         else:
             print('error: update failed due to incorrect details')

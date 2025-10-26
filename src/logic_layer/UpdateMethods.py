@@ -26,12 +26,16 @@ class UpdateDataService:
     def updateUser_profile(self, original_username, username, u_fname, u_lname):
         for user in self.user_.get_all_users():
             if user[1].lower() == original_username.lower() and int(user[3]) == Roles.SERVICE_ENGINEER.value:
-                self.user_.update_user_profile(original_username, username, u_fname, u_lname)
-                return True
+                updated_user = self.user_.update_user_profile(original_username, username, u_fname, u_lname)
+                if updated_user != user:
+                    return bool(updated_user != False)
+                return False
             elif user[1].lower() == original_username.lower() and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
                 if Session.user.role == Roles.SUPER_ADMINISTRATOR:
-                    self.user_.update_user_profile(original_username, username, u_fname, u_lname)
-                    return True
+                    updated_user = self.user_.update_user_profile(original_username, username, u_fname, u_lname)
+                    if updated_user != user:
+                        return bool(updated_user != False)
+                    return False
                 else:
                     print("Error: only super administrators can update system admin profile!")
                     return False

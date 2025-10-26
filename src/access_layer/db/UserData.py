@@ -174,19 +174,20 @@ class user_data:
                     print("User not found.")
                     return False
                 
+                # print(f"DB role: {row[-1]} | Session role: {Session.user.role.value}")
                 # Cannot update a user with a higher rank
-                if row[-1] > Session.user.role.value:
-                    return
+                if int(row[-1]) > int(Session.user.role.value):
+                    return False
                 
                 current_username = row[0]
                 current_first_name = self._decrypt_name(row[1])
                 current_last_name = self._decrypt_name(row[2])
 
-                current_username, current_first_name, current_last_name = row
+                # current_username, current_first_name, current_last_name = row
                 # Use current value if input is blank
-                username = username if username.strip() != "" else current_username
-                first_name = first_name if first_name.strip() != "" else current_first_name
-                last_name = last_name if last_name.strip() != "" else current_last_name
+                username = username if username and username.strip() != "" else current_username
+                first_name = first_name if first_name and first_name.strip() != "" else current_first_name
+                last_name = last_name if last_name and last_name.strip() != "" else current_last_name
 
                 encrypted_first_name = self._encrypt_name(first_name)
                 encrypted_last_name = self._encrypt_name(last_name)
@@ -194,10 +195,11 @@ class user_data:
                 cursor.execute('''
                     UPDATE users
                     SET username = ?, first_name = ?, last_name = ?
-                    WHERE username = ?
-                ''', (username.lower(), encrypted_first_name, encrypted_last_name, original_username))
+                    WHERE id = ? OR LOWER(username) = ?
+                ''', (username.lower(), encrypted_first_name, encrypted_last_name, original_username, original_username.lower()))
                 return cursor.rowcount > 0
-        except Exception:
+        except Exception as ex:
+            print(ex)
             return False
 
     def update_user_password(self, username_or_id, hashed_salted_password):
