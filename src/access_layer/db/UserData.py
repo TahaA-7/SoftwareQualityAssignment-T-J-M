@@ -48,20 +48,28 @@ class user_data:
                 fetched = cursor.fetchone()
                 if fetched:
                     decrypted = list(fetched)
+                    decrypted[1] = self._decerypt_name(fetched[1]) # username
                     decrypted[4] = self._decrypt_name(fetched[4])
                     decrypted[5] = self._decrypt_name(fetched[5])
                     return tuple(decrypted)
+                
                 cursor.execute("""SELECT id, username, hashed_salted_password, role, first_name, last_name, 
-                    is_active FROM users WHERE username = ?""", (username_or_id.lower(),))
-                result =  cursor.fetchone()
-                if result:
-                    decrypted = list(result)
-                    decrypted[4] = self._decrypt_name(result[4])
-                    decrypted[5] = self._decrypt_name(result[5])
-                    return tuple(decrypted)
+                    is_active FROM users""")
+                all_users = cursor.fetchall()
+                
+                for user in all_users:
+                    decrypted_username = self._decrypt_name(user[1])
+                    if decrypted_username.lower() == username_or_id.lower():
+                        decrypted = list(user)
+                        decrypted[1] = decrypted_username  # username
+                        decrypted[4] = self._decrypt_name(user[4])  # first_name
+                        decrypted[5] = self._decrypt_name(user[5])  # last_name
+                        return tuple(decrypted)
+                
                 return None
         except Exception:
             return None
+            
 
     def get_all_users(self):
         # function not allowed for system admins to view the users data
@@ -79,6 +87,7 @@ class user_data:
             decrypted_users = []
             for row in rows:
                 decrypted_row = list(row)
+                decrypted_row[1] = self._decrypt_name(row[1]) # username
                 decrypted_row[4] = self._decrypt_name(row[4])
                 decrypted_row[5] = self._decrypt_name(row[5])
                 decrypted_users.append(tuple(decrypted_row))
@@ -92,6 +101,7 @@ class user_data:
         if user_to_add_type >= Session.user.role.value:
             return None
         
+        encrypted_username = self._encrypt_name(username.lower())
         encrypted_first_name = self._encrypt_name(first_name)
         encrypted_last_name = self._encrypt_name(last_name)
         
@@ -104,7 +114,7 @@ class user_data:
                     cursor.execute('''
                         INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
                         VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                    ''', (id, username.lower(), hashed_salted_password, user_to_add_type, encrypted_first_name, encrypted_last_name, True))
+                    ''', (id, encrypted_username, hashed_salted_password, user_to_add_type, encrypted_first_name, encrypted_last_name, True))
                     return True
                 return False
             except Exception:
@@ -150,11 +160,19 @@ class user_data:
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
-                cursor.execute(
-                    "DELETE FROM users WHERE id = ? OR LOWER(username) = ?",
-                    (username_or_id, username_or_id.lower())
-                )
-                return cursor.rowcount > 0
+                
+                # First try by ID
+                cursor.execute("DELETE FROM users WHERE id = ?", (username_or_id,))
+                if cursor.rowcount > 0:
+                    return True
+                
+                # Then try by finding encrypted username
+                user = self.fetch_user(username_or_id)
+                if user:
+                    cursor.execute("DELETE FROM users WHERE id = ?", (user[0],))
+                    return cursor.rowcount > 0
+                
+                return False
         except Exception:
             return False
 
@@ -162,88 +180,68 @@ class user_data:
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
-                # Fetch current values
-                cursor.execute('''
-                    SELECT username, first_name, last_name, role FROM users WHERE id = ?
-                ''', (original_username,))
-                row = cursor.fetchone()
-                if not row:
-                    cursor.execute('''
-                        SELECT username, first_name, last_name, role FROM users WHERE username = ?
-                    ''', (original_username,))
-                    row = cursor.fetchone()  
-                if not row:
+                
+                # First get the user
+                user = self.fetch_user(original_username)
+                if not user:
                     print("User not found.")
                     return False
                 
-                # print(f"DB role: {row[-1]} | Session role: {Session.user.role.value}")
+                user_id = user[0]
+                user_role = user[3]
+                
                 # Cannot update a user with a higher rank
-                if int(row[-1]) > int(Session.user.role.value):
+                if int(user_role) > int(Session.user.role.value):
                     return False
                 
-                current_username = row[0]
-                current_first_name = self._decrypt_name(row[1])
-                current_last_name = self._decrypt_name(row[2])
+                # Get current decrypted values
+                current_username = user[1]
+                current_first_name = user[4]
+                current_last_name = user[5]
 
-                # current_username, current_first_name, current_last_name = row
                 # Use current value if input is blank
                 username = username if username and username.strip() != "" else current_username
                 first_name = first_name if first_name and first_name.strip() != "" else current_first_name
                 last_name = last_name if last_name and last_name.strip() != "" else current_last_name
 
+                # Encrypt the new values
+                encrypted_username = self._encrypt_name(username.lower())
                 encrypted_first_name = self._encrypt_name(first_name)
                 encrypted_last_name = self._encrypt_name(last_name)
  
                 cursor.execute('''
                     UPDATE users
                     SET username = ?, first_name = ?, last_name = ?
-                    WHERE id = ? OR LOWER(username) = ?
-                ''', (username.lower(), encrypted_first_name, encrypted_last_name, original_username, original_username.lower()))
+                    WHERE id = ?
+                ''', (encrypted_username, encrypted_first_name, encrypted_last_name, user_id))
                 return cursor.rowcount > 0
         except Exception as ex:
             print(ex)
             return False
 
     def update_user_password(self, username_or_id, hashed_salted_password):
-        # if Session.user.role.value == 1:
-        #     return None
         try:
-            with self.db.connect() as conn:
-                cursor = conn.cursor()
-                # Fetch current values
-                cursor.execute('''
-                    SELECT username, role FROM users WHERE id = ?
-                ''', (username_or_id,))
-                row = cursor.fetchone()
-                if not row:
-                    cursor.execute('''
-                        SELECT username, role FROM users WHERE username = ?
-                    ''', (username_or_id,))
-                    row = cursor.fetchone()
-                if not row:
-                    print("User not found.")
-                    return False
-                
-                if int(row[-1]) > int(Session.user.role.value):
-                    return
+            # Get the user first
+            user = self.fetch_user(username_or_id)
+            if not user:
+                print("User not found.")
+                return False
+            
+            user_id = user[0]
+            user_role = user[3]
+            
+            if int(user_role) > int(Session.user.role.value):
+                return False
 
             with self.db.connect() as conn:
                 cursor = conn.cursor()
-                cursor.execute('''
-                    UPDATE users
-                    SET hashed_salted_password = ?
-                    WHERE username = ?
-                ''', (hashed_salted_password, username_or_id.lower()))
-
-                if cursor.rowcount > 0:
-                    return True
                 cursor.execute('''
                     UPDATE users
                     SET hashed_salted_password = ?
                     WHERE id = ?
-                ''', (hashed_salted_password, username_or_id))
+                ''', (hashed_salted_password, user_id))
                 return cursor.rowcount > 0
         except Exception as ex:
             print(ex)
             return False
-
+        
