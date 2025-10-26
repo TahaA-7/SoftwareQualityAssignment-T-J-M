@@ -4,7 +4,9 @@ from logic_layer.AddMethods import AddDataService
 from logic_layer.DeleteMethods import DeleteDataService
 from logic_layer.UpdateMethods import UpdateDataService
 from logic_layer.BackupMethods import BackupMethods
+
 from presentation_layer.utils.Session import Session
+from presentation_layer.utils.Roles import Roles
 
 from presentation_layer.menus.CreateOrUpdateEmployee import CreateOrUpdateEmployee
 from presentation_layer.menus.LoginMenu import LoginMenu
@@ -139,7 +141,7 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
 
     @classmethod
     def delete_system_administrator(cls):
-        username_or_id = input("Enter Service Engineer username or ID to delete: ").strip()
+        username_or_id = input("Enter System Admin username or ID to delete: ").strip()
         cls.delete_data_methods.deleteSystemAdmin(username_or_id)
 
     @classmethod
@@ -148,8 +150,9 @@ class SuperAdministratorInterface(SystemAdministratorInterface):
         username_or_id = input("Please enter the name or ID of the system admin to reset their password: ")
         user = cls.get_data_methods.get_user_by_username_or_id(username_or_id)
         if user != None:
-            updated_user = cls.update_data_methods.updateUser_password(username_or_id, temp_pw)
-            if updated_user:
+            updated_user = cls.update_data_methods.updateUser_password(
+                username_or_id, temp_pw, Roles.SYSTEM_ADMINISTRATOR.value)
+            if updated_user and updated_user != None:
                 print("System admin password sucessfully reset")
             else:
                 print("Error: could not update system admin password")

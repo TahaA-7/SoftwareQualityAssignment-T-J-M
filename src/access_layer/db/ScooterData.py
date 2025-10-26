@@ -115,7 +115,7 @@ class scooter_data:
                 soc_max = soc_max if soc_max != "" else curr_soc_max
                 lat = lat if lat != "" else curr_lat
                 lon = lon if lon != "" else curr_lon
-                out_of_service_status = out_of_service_status if out_of_service_status not in (False, "", "ACTIVE", "active") else curr_out_of_service_status
+                out_of_service_status = out_of_service_status if out_of_service_status not in (False, "", "ACTIVE", "active") else " "
                 mileage = mileage if mileage != "" else curr_mileage
                 last_maint_date = last_maint_date if last_maint_date != "" else curr_last_maint_date
                 cursor.execute("""UPDATE scooters

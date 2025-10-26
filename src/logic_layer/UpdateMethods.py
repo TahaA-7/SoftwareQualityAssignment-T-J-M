@@ -7,6 +7,7 @@ from access_layer.db.UserData import user_data
 from DataModels.ScooterModel import Scooter
 
 from logic_layer.utils.PasswordHasherSalter import PasswordHasherSalter
+from logic_layer.utils.StringValidations import StringValidations
 
 from presentation_layer.utils.Roles import Roles
 from presentation_layer.utils.Session import Session
@@ -44,23 +45,37 @@ class UpdateDataService:
         return False
 
     def update_SystemAdmin(self):
-        username = input("Username or id from user to update: ").strip()
+        # username = input("Username or id from user to update: ").strip()
+        username = Session.user.username
 
         for user in self.user_.get_all_users():
-            if user[1].lower() == username.lower() and user[3] == Roles(int(user[3])) or user[3] == Roles.SYSTEM_ADMINISTRATOR:
+            if user[1].lower() == username.lower() and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
                 first_name = input("New first name: ").strip()
                 last_name = input("New last name: ").strip()
-                self.user_.update_user_profile(username, first_name, last_name)
-                print("User profile updated.")
+                flag_fname = False
+                flag_lname = False
+                if StringValidations.is_valid_first_or_last_name(first_name):
+                    flag_fname = True
+                if StringValidations.is_valid_first_or_last_name(last_name):
+                    flag_lname = True
+
+                if bool(flag_fname & flag_lname):
+                    self.user_.update_user_profile(username, username, first_name, last_name)
+                    print("User profile updated.")
+                else:
+                    print("Error: first name and/or last name invalid")
                 return
 
         print("No System Administrator with that username.")
 
 
-    def updateUser_password(self, username_or_id, password):
+    def updateUser_password(self, username_or_id, password, role: int):
+        if int(role) > int(Session.user.role.value):
+            print("Cannot update")
+            return False
         hashed_salted = PasswordHasherSalter.hash_salt_password(password)
         updated_user = self.user_.update_user_password(username_or_id, hashed_salted)
-        return updated_user != None
+        return bool(updated_user != None)
 
     def updateTraveller(self, customer_id, fname, lname, bday, gender, street, house_num, zip, city, email, phone, license_num):
         # customer_id = input("Traveller ID: ").strip()
@@ -111,7 +126,7 @@ class UpdateDataService:
 
         flag_serv_status = False
         if len(out_of_service_status) > 0:
-            if all(c in set(string.ascii_letters + string.digits + (",", ".", ":", "-")) for c in out_of_service_status) & len(out_of_service_status) < 401:
+            if all(c in set(string.ascii_letters + string.digits + ",.:-") for c in out_of_service_status) & len(out_of_service_status) < 401:
                 flag_serv_status = True
         if not flag_serv_status: out_of_service_status = None
 

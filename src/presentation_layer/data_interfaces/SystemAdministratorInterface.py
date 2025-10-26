@@ -14,6 +14,7 @@ import random, string
 
 from getpass import getpass
 
+from presentation_layer.utils.Roles import Roles
 from presentation_layer.utils.Session import Session
 from presentation_layer.menus.LoginMenu import LoginMenu
 
@@ -146,7 +147,8 @@ class SystemAdministratorInterface(ServiceEngineerInterface):
         username_or_id = input("Please enter the name or ID of the service engineer to reset their password: ")
         user = cls.get_data_methods.get_user_by_username_or_id(username_or_id)
         if user != None:
-            updated_user = cls.update_data_methods.updateUser_password(username_or_id, temp_pw)
+            updated_user = cls.update_data_methods.updateUser_password(
+                username_or_id, temp_pw, Roles.SERVICE_ENGINEER.value)
             if updated_user != None:
                 print("Service engineer password sucessfully reset")
             else:

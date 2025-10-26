@@ -3,6 +3,8 @@ import string
 # https://stackoverflow.com/questions/30556857/creating-a-static-class-with-no-instances
 
 class StringValidations:
+    fname_chars_set = set(string.ascii_letters + "-")
+    lname_chars_set = set(string.ascii_letters + " " + ",")
     @classmethod
     def parse_int(prompt):
         while True:
@@ -28,9 +30,12 @@ class StringValidations:
     @classmethod
     def is_valid_email(cls, email: str) -> bool:
         email_regex_flag = False
+        flag_len = False
         if cls.__check_regex("email", email):
             email_regex_flag = True
-        return email_regex_flag
+        if len(email) < 101:
+            flag_len = True
+        return bool(email_regex_flag & flag_len)
 
     @classmethod
     def is_valid_password(cls, password: str) -> bool:
@@ -40,7 +45,16 @@ class StringValidations:
 
     @classmethod
     def is_valid_first_or_last_name(cls, fl_name: str) -> bool:
-        return fl_name.isalpha()
+        flag_alpha = False
+        flag_len = False
+        if all(c in cls.fname_chars_set for c in fl_name) and fl_name.count("-") < 2:
+            flag_alpha = True
+        if all(c in cls.lname_chars_set for c in fl_name
+               ) and fl_name.count(" ") < 2 and fl_name.count(",") < 2:
+            flag_alpha = True
+        if len(fl_name) < 101:
+            flag_len = True
+        return bool(flag_alpha & flag_len)
 
     @classmethod
     def __length_and_characters_check(cls, type, str: str):

@@ -65,7 +65,8 @@ f"""What do you want to do?:
         if not StringValidations.is_valid_password(new_password) or new_password != confirm_new_password:
             return False
         else:
-            if updatedataservice_obj.updateUser_password(Session.user.username, new_password):
+            if updatedataservice_obj.updateUser_password(
+                Session.user.username, new_password, Session.user.role.value):
                 print("User profile updated.")
             else:
                 print("Error: password couldn't be updated.")

@@ -63,7 +63,7 @@ f"""Please select a field and set it to a (new) value or leave blank to keep old
             add_data_service_obj = AddDataService()
             added_user = add_data_service_obj.addUser(
                 self.username, self.password, self.u_fname, self.u_lname, self.user_role)
-            if added_user != None:
+            if added_user != None and added_user != False:
                 Logger.log(self.username, "Registered new account")
                 print("User registered succesfully.")
             else:

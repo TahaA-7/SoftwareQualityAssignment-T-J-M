@@ -451,7 +451,7 @@ class CreateOrUpdateMenu:
         flag_serv_status = False
         out_of_service = input("Is out of service? Enter details, else `n/N` to leave empty ").strip()
         if len(out_of_service) > 0:
-            if all(c in set(string.ascii_letters + string.digits + (",", ".", ":", "-")) for c in out_of_service) & len(out_of_service) < 401:
+            if all(c in set(string.ascii_letters + string.digits + ",.:-") for c in out_of_service) & len(out_of_service) < 401:
                 flag_serv_status = True
         else:
             flag_serv_status = True

@@ -29,29 +29,38 @@ class traveller_data:
         if Session.user.role.value not in (2, 3):
             return None
 
+        keyword = keyword.strip()
+        if keyword == "":
+            return []
+
+        keyword_l = keyword.lower()
+
         with self.db.connect() as conn:
             cursor = conn.cursor()
             keyword = f"%{keyword.lower()}%"
             cursor.execute('''
                 SELECT customer_id, first_name, last_name, email, mobile_phone
                 FROM travellers
-                WHERE LOWER(customer_id) LIKE ?
-                OR LOWER(first_name) LIKE ?
-                OR LOWER(last_name) LIKE ?
-                OR LOWER(email) LIKE ?
-                OR LOWER(mobile_phone) LIKE ?
-            ''', (keyword, keyword, keyword, keyword, keyword))
+            ''', )
             rows = cursor.fetchall()
             
             # Decrypt search results
             decrypted_results = []
             for row in rows:
                 decrypted_row = list(row)
-                decrypted_row[1] = SensitiveDataEncryptor.decrypt_field(row[1])  # first_name
-                decrypted_row[2] = SensitiveDataEncryptor.decrypt_field(row[2])  # last_name
-                decrypted_row[3] = SensitiveDataEncryptor.decrypt_field(row[3])  # email
-                decrypted_row[4] = SensitiveDataEncryptor.decrypt_field(row[4])  # mobile_phone
-                decrypted_results.append(tuple(decrypted_row))
+                cid = row[0]
+                fname = SensitiveDataEncryptor.decrypt_field(row[1])
+                lname = SensitiveDataEncryptor.decrypt_field(row[2])
+                email = SensitiveDataEncryptor.decrypt_field(row[3])
+                phone = SensitiveDataEncryptor.decrypt_field(row[4])
+
+                # case-insensitive substring match against any searchable field
+                if (keyword_l in cid.lower()
+                        or keyword_l in fname.lower()
+                        or keyword_l in lname.lower()
+                        or keyword_l in email.lower()
+                        or keyword_l in phone.lower()):
+                    decrypted_results.append((cid, fname, lname, email, phone))
             
             return decrypted_results
         

@@ -38,7 +38,7 @@ f"""Please select a field and set it to a (new) value
 [O] traveller license number {"✓" if self._get_traveller_fields_dict()["license_number"] not in [None, ""] else ""}
 
 [1] submit register
-[2] submit update to existing account/profile
+[2] submit update to existing traveller
 [3] cancel
 """))
             

@@ -100,11 +100,13 @@ class user_data:
         with self.db.connect() as conn:
             cursor = conn.cursor()
             try:
-                cursor.execute('''
-                    INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
-                    VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
-                ''', (id, username.lower(), hashed_salted_password, user_to_add_type, encrypted_first_name, encrypted_last_name, True))
-                return True
+                if self.fetch_user(username) == None:
+                    cursor.execute('''
+                        INSERT INTO users (id, username, hashed_salted_password, role, first_name, last_name, registration_date, is_active)
+                        VALUES (?, ?, ?, ?, ?, ?, datetime('now'), ?)
+                    ''', (id, username.lower(), hashed_salted_password, user_to_add_type, encrypted_first_name, encrypted_last_name, True))
+                    return True
+                return False
             except Exception:
                 return False
             
@@ -203,8 +205,8 @@ class user_data:
             return False
 
     def update_user_password(self, username_or_id, hashed_salted_password):
-        if Session.user.role.value == 1:
-            return None
+        # if Session.user.role.value == 1:
+        #     return None
         try:
             with self.db.connect() as conn:
                 cursor = conn.cursor()
@@ -222,7 +224,7 @@ class user_data:
                     print("User not found.")
                     return False
                 
-                if row[-1] > Session.user.role.value:
+                if int(row[-1]) > int(Session.user.role.value):
                     return
 
             with self.db.connect() as conn:
@@ -241,6 +243,7 @@ class user_data:
                     WHERE id = ?
                 ''', (hashed_salted_password, username_or_id))
                 return cursor.rowcount > 0
-        except Exception:
+        except Exception as ex:
+            print(ex)
             return False
 

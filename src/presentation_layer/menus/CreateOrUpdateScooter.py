@@ -42,7 +42,7 @@ f"""Please select a field and set it to a (new) value
 [Y] out of service status {"✓" if self._get_scooter_fields_dict()["out_of_service_status"] not in [None, ""] else ""}
 
 [1] submit register
-[2] submit update to existing account/profile
+[2] submit update to existing scooter
 [3] cancel
 """))
             
