@@ -20,7 +20,7 @@ class DeleteDataService:
             if user[0] == username_or_id and int(user[3]) == Roles.SERVICE_ENGINEER.value:
                 confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
                 if confirm == 'y':
-                    self.user_.delete_user(username_or_id)
+                    self.user_.delete_user(username_or_id, Roles.SERVICE_ENGINEER.value)
                     print(f"Service Engineer '{user[1]}' deleted.")
                 else:
                     print("Deletion cancelled.")
@@ -28,8 +28,8 @@ class DeleteDataService:
             elif user[1].lower() == username_or_id and int(user[3]) == Roles.SERVICE_ENGINEER.value:
                 confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
                 if confirm == 'y':
-                    self.user_.delete_user(username_or_id)
-                    print(f"System admin '{user[1]}' deleted.")
+                    self.user_.delete_user(username_or_id, Roles.SERVICE_ENGINEER.value)
+                    print(f"Service Engineer '{user[1]}' deleted.")
                 else:
                     print("Deletion cancelled.")
                 return
@@ -41,7 +41,7 @@ class DeleteDataService:
             if user[0] == username_or_id and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
                 confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
                 if confirm == 'y':
-                    self.user_.delete_user(username_or_id)
+                    self.user_.delete_user(username_or_id, Roles.SYSTEM_ADMINISTRATOR.value)
                     print(f"System admin '{user[1]}' deleted.")
                 else:
                     print("Deletion cancelled.")
@@ -49,7 +49,7 @@ class DeleteDataService:
             elif user[1].lower() == username_or_id and int(user[3]) == Roles.SYSTEM_ADMINISTRATOR.value:
                 confirm = input(f"Are you sure you want to delete '{user[1]}'? (y/n): ").lower().strip()
                 if confirm == 'y':
-                    self.user_.delete_user(username_or_id)
+                    self.user_.delete_user(username_or_id, Roles.SYSTEM_ADMINISTRATOR.value)
                     print(f"System admin '{user[1]}' deleted.")
                 else:
                     print("Deletion cancelled.")
@@ -62,9 +62,9 @@ class DeleteDataService:
             if traveller[0].lower() == customer_id.lower():
                 confirm = input(f"Are you sure you want to delete '{customer_id}'? (y/n): ").lower()
                 if confirm == 'y':
-                    if self.user_.delete_user(customer_id.upper()):
-                        print(f"Traveller '{customer_id}' deleted.")
-                    print("No Traveller with that ID.")
+                    # travellers are stored in travellers table; use traveller_data to delete
+                    self.traveller_.delete_traveller(traveller[0])
+                    print(f"Traveller '{customer_id}' deleted.")
                 else:
                     print("Deletion cancelled.")
                 return
